@@ -29,7 +29,9 @@ app.layout = html.Div(
                     searchable=True,
                     id="select",
                 ),
-                dmc.Center(dcc.Graph(id="map")),
+                dmc.Center(
+                    dcc.Graph(id="map", style={"height": "80vh", "width": "100%"})
+                ),
             ]
         )
     ]
@@ -49,7 +51,10 @@ def update_select(search_query):
                 session_token=session_token, input_text=search_query
             )
             # Create a map using the fetched data
-            return [result["description"] for result in search_results]
+            return [
+                {"value": result["place_id"], "label": result["description"]}
+                for result in search_results
+            ]
         except Exception as e:
             print("ERROR : ", e)
             return []
@@ -59,15 +64,35 @@ def update_select(search_query):
 @app.callback(
     Output("map", "figure"),
     [Input("select", "value")],
+    # prevent_initial_call=True,
 )
 def update_map(select_value):
     try:
+        geocode_result = gmaps.geocode(place_id=select_value)
+        geocode_lon = geocode_result[0]["geometry"]["location"]["lng"]
+        geocode_lat = geocode_result[0]["geometry"]["location"]["lat"]
         # Create a map using the fetched data
-        fig = px.scatter_geo(lon=[0], lat=[0])
+        fig = px.scatter_geo(
+            lon=[geocode_lon],
+            lat=[geocode_lat],
+            # center={"lat": geocode_lat, "lon": geocode_lon},
+            projection="natural earth",
+            scope="world",
+        )
+        fig.update_layout(
+            geo=dict(
+                projection_scale=10,
+                center=dict(
+                    lat=geocode_lat,
+                    lon=geocode_lon,
+                ),
+                showland=True,
+            )
+        )
         return fig
     except Exception as e:
         print("ERROR : ", e)
-        return px.scatter_geo(lon=[0], lat=[0])
+        return px.scatter_geo(lon=[0], lat=[0], projection="natural earth")
 
 
 if __name__ == "__main__":
