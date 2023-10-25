@@ -57,42 +57,67 @@ def update_select(search_query):
             ]
         except Exception as e:
             print("ERROR : ", e)
-            return []
     return []
 
 
 @app.callback(
     Output("map", "figure"),
     [Input("select", "value")],
-    # prevent_initial_call=True,
 )
 def update_map(select_value):
-    try:
-        geocode_result = gmaps.geocode(place_id=select_value)
-        geocode_lon = geocode_result[0]["geometry"]["location"]["lng"]
-        geocode_lat = geocode_result[0]["geometry"]["location"]["lat"]
-        # Create a map using the fetched data
-        fig = px.scatter_geo(
-            lon=[geocode_lon],
-            lat=[geocode_lat],
-            # center={"lat": geocode_lat, "lon": geocode_lon},
-            projection="natural earth",
-            scope="world",
-        )
-        fig.update_layout(
-            geo=dict(
-                projection_scale=10,
-                center=dict(
-                    lat=geocode_lat,
-                    lon=geocode_lon,
-                ),
-                showland=True,
+    if select_value:
+        try:
+            geocode_result = gmaps.geocode(place_id=select_value)
+            geocode_lon = geocode_result[0]["geometry"]["location"]["lng"]
+            geocode_lat = geocode_result[0]["geometry"]["location"]["lat"]
+            # Create a map using the fetched data
+            fig = px.scatter_geo(
+                lon=[geocode_lon],
+                lat=[geocode_lat],
+                # center={"lat": geocode_lat, "lon": geocode_lon},
+                projection="orthographic",
+                scope="world",
             )
+            fig.update_layout(
+                geo=dict(
+                    projection_scale=10,
+                    fitbounds="locations",
+                    center=dict(
+                        lat=geocode_lat,
+                        lon=geocode_lon,
+                    ),
+                    showland=True,
+                    landcolor="rgb(212, 212, 212)",
+                    subunitcolor="rgb(255, 255, 255)",
+                    countrycolor="rgb(255, 255, 255)",
+                    showlakes=True,
+                    lakecolor="rgb(255, 255, 255)",
+                    showsubunits=True,
+                    showcountries=True,
+                    resolution=50,
+                )
+            )
+            return fig
+        except Exception as e:
+            print("ERROR : ", e)
+    fig = px.scatter_geo(lon=[], lat=[], projection="orthographic")
+    fig.update_layout(
+        geo=dict(
+            projection_scale=10,
+            fitbounds="locations",
+            showland=True,
+            landcolor="rgb(212, 212, 212)",
+            subunitcolor="rgb(255, 255, 255)",
+            countrycolor="rgb(255, 255, 255)",
+            showlakes=True,
+            lakecolor="rgb(255, 255, 255)",
+            showsubunits=True,
+            showcountries=True,
+            resolution=50,
         )
-        return fig
-    except Exception as e:
-        print("ERROR : ", e)
-        return px.scatter_geo(lon=[0], lat=[0], projection="natural earth")
+    )
+
+    return fig
 
 
 if __name__ == "__main__":
