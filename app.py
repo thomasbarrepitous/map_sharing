@@ -1,9 +1,9 @@
-from dash import Dash, Output, Input, State, dcc, html
-import plotly.express as px
+from dash import Dash, Output, Input, State, html
 import dash_mantine_components as dmc
 import googlemaps
 import os
 import uuid
+import dash_leaflet as dl
 
 app = Dash(
     __name__,
@@ -17,8 +17,23 @@ app = Dash(
 gmaps = googlemaps.Client(key=os.environ.get("GCP_KEY"))
 session_token = uuid.uuid4().hex
 
+container_style = {
+    "marginTop": 20,
+    "marginBottom": 20,
+}
+
 app.layout = html.Div(
     [
+        dmc.Container(
+            [
+                dmc.Header(
+                    height=60,
+                    children=[dmc.Text("Map Sharing")],
+                    style={"backgroundColor": "#9c86e2"},
+                )
+            ],
+            style=container_style,
+        ),
         dmc.Container(
             [
                 dmc.Select(
@@ -29,11 +44,24 @@ app.layout = html.Div(
                     searchable=True,
                     id="select",
                 ),
-                dmc.Center(
-                    dcc.Graph(id="map", style={"height": "80vh", "width": "100%"})
+            ],
+            style=container_style,
+        ),
+        dmc.Container(
+            [
+                html.Div(
+                    dl.Map(
+                        [dl.TileLayer()],
+                        center=[40, 15],
+                        zoom=2,
+                        id="map",
+                        style={"height": "50vh", "z-index": 0, "tabindex": -2},
+                    ),
+                    id="map-container",
                 ),
-            ]
-        )
+            ],
+            style=container_style,
+        ),
     ]
 )
 
@@ -61,8 +89,9 @@ def update_select(search_query):
 
 
 @app.callback(
-    Output("map", "figure"),
+    Output("map", "viewport"),
     [Input("select", "value")],
+    prevent_initial_call=True,
 )
 def update_map(select_value):
     if select_value:
@@ -71,53 +100,10 @@ def update_map(select_value):
             geocode_lon = geocode_result[0]["geometry"]["location"]["lng"]
             geocode_lat = geocode_result[0]["geometry"]["location"]["lat"]
             # Create a map using the fetched data
-            fig = px.scatter_geo(
-                lon=[geocode_lon],
-                lat=[geocode_lat],
-                # center={"lat": geocode_lat, "lon": geocode_lon},
-                projection="orthographic",
-                scope="world",
-            )
-            fig.update_layout(
-                geo=dict(
-                    projection_scale=10,
-                    fitbounds="locations",
-                    center=dict(
-                        lat=geocode_lat,
-                        lon=geocode_lon,
-                    ),
-                    showland=True,
-                    landcolor="rgb(212, 212, 212)",
-                    subunitcolor="rgb(255, 255, 255)",
-                    countrycolor="rgb(255, 255, 255)",
-                    showlakes=True,
-                    lakecolor="rgb(255, 255, 255)",
-                    showsubunits=True,
-                    showcountries=True,
-                    resolution=50,
-                )
-            )
-            return fig
+            return dict(center=[geocode_lat, geocode_lon], zoom=11, transition="flyTo")
         except Exception as e:
             print("ERROR : ", e)
-    fig = px.scatter_geo(lon=[], lat=[], projection="orthographic")
-    fig.update_layout(
-        geo=dict(
-            projection_scale=10,
-            fitbounds="locations",
-            showland=True,
-            landcolor="rgb(212, 212, 212)",
-            subunitcolor="rgb(255, 255, 255)",
-            countrycolor="rgb(255, 255, 255)",
-            showlakes=True,
-            lakecolor="rgb(255, 255, 255)",
-            showsubunits=True,
-            showcountries=True,
-            resolution=50,
-        )
-    )
-
-    return fig
+    return {}
 
 
 if __name__ == "__main__":
