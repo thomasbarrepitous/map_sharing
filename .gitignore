@@ -161,3 +161,4 @@ cython_debug/
 
 # Authentification file
 auth.json
+.env
