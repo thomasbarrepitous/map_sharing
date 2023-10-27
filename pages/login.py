@@ -32,7 +32,20 @@ login_component = (
                 #     checked=True,
                 # ),
                 dmc.Button(
-                    "Login", id="load-button", variant="outline", fullWidth=True
+                    "Login",
+                    id="load-button",
+                    variant="gradient",
+                    gradient={"from": "indigo", "to": "cyan"},
+                    fullWidth=True,
+                ),
+                dmc.Anchor(
+                    dmc.Button(
+                        "Create an Account",
+                        id="create-account-btn",
+                        variant="outline",
+                        fullWidth=True,
+                    ),
+                    href="/create-account",
                 ),
             ],
         )

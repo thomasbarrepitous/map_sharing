@@ -1,0 +1,122 @@
+import dash
+from dash import html
+import dash_mantine_components as dmc
+from dash import html, Output, Input, State, no_update, callback
+from dash_iconify import DashIconify
+
+# Custom modules
+from utils import mapsharing_login as mslogin
+
+dash.register_page(__name__, path="/create-account")
+
+
+signup_form = (
+    dmc.LoadingOverlay(
+        dmc.Stack(
+            id="loading-form",
+            children=[
+                dmc.TextInput(
+                    label="Username",
+                    required="True",
+                    placeholder="Your username",
+                    icon=DashIconify(icon="radix-icons:person"),
+                    id="signup-username-input",
+                ),
+                dmc.TextInput(
+                    label="Your Email",
+                    required="True",
+                    placeholder="Your Email",
+                    icon=DashIconify(icon="ic:round-alternate-email"),
+                    id="signup-email-input",
+                ),
+                dmc.TextInput(
+                    label="Password",
+                    required="True",
+                    type="password",
+                    placeholder="Your password",
+                    icon=DashIconify(icon="radix-icons:lock-closed"),
+                    id="signup-password-input",
+                ),
+                dmc.TextInput(
+                    label="Confirm password",
+                    required="True",
+                    type="password",
+                    placeholder="Confirm your password",
+                    icon=DashIconify(icon="radix-icons:lock-closed"),
+                    id="signup-confirm-password-input",
+                ),
+                dmc.Button(
+                    "Create account",
+                    id="signup-create-btn",
+                    variant="gradient",
+                    gradient={"from": "indigo", "to": "cyan"},
+                    fullWidth=True,
+                ),
+            ],
+        )
+    ),
+)
+
+
+layout = html.Div(
+    children=[
+        dmc.Container(
+            [
+                dmc.Anchor(
+                    dmc.Button(
+                        "Previous",
+                        leftIcon=DashIconify(icon="uil:previous", width=20),
+                    ),
+                    href="/login",
+                ),
+                dmc.Center(
+                    signup_form,
+                    style={"height": "75vh"},
+                ),
+            ],
+            style={"height": "100vh"},
+        ),
+    ],
+    style={"height": "100vh"},
+)
+
+
+def validate_username(username: str):
+    return "Username cannot be empty." if not bool(username) else False
+
+
+def validate_email(email: str):
+    return "Email cannot be empty." if not bool(email) else False
+
+
+def validate_password(password: str):
+    return "Password cannot be empty." if not bool(password) else False
+
+
+def valide_confirm_password(password: str, confirm_password: str):
+    if password != confirm_password:
+        return "Passwords confirmation doesn't match."
+    if not bool(confirm_password):
+        return "Confirm password cannot be empty."
+    return False
+
+
+@callback(
+    Output("signup-username-input", "error"),
+    Output("signup-email-input", "error"),
+    Output("signup-password-input", "error"),
+    Output("signup-confirm-password-input", "error"),
+    Input("signup-create-btn", "n_clicks"),
+    State("signup-username-input", "value"),
+    State("signup-password-input", "value"),
+    State("signup-confirm-password-input", "value"),
+    State("signup-email-input", "value"),
+    prevent_initial_call=True,
+)
+def validate_login(n_clicks, username, password, confirm_password, email):
+    return (
+        validate_username(username),
+        validate_email(email),
+        validate_password(password),
+        valide_confirm_password(password, confirm_password),
+    )
