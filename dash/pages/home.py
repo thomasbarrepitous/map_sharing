@@ -22,18 +22,36 @@ layout = html.Div(
                 dmc.Header(
                     height=60,
                     children=[
-                        dmc.Text("Map Sharing"),
-                        dmc.Anchor(
-                            dmc.Button(
-                                "Login",
-                                leftIcon=DashIconify(
-                                    icon="carbon:settings-check", width=20
+                        dmc.Grid(
+                            [
+                                dmc.Col(
+                                    dmc.Center(
+                                        [
+                                            html.Img(src="/assets/logo.png"),
+                                            dmc.Text("Map Sharing"),
+                                        ]
+                                    ),
+                                    span=8,
+                                    # offset=2,
                                 ),
-                            ),
-                            href="/login",
+                                dmc.Col(
+                                    dmc.Anchor(
+                                        dmc.Button(
+                                            "Login",
+                                            leftIcon=DashIconify(
+                                                icon="carbon:settings-check", width=20
+                                            ),
+                                        ),
+                                        href="/login",
+                                    ),
+                                    span=2,
+                                ),
+                            ],
+                            align="center",
+                            justify="flex-end",
                         ),
                     ],
-                    style={"backgroundColor": "red"},
+                    style={"backgroundColor": "white"},
                 )
             ],
             style={"marginTop": 20, "marginbottom": 20},
