@@ -1,6 +1,6 @@
 from django.urls import include, path
 from rest_framework import routers
-from mapsharingapi.mapsharing import views
+from .mapsharing.views import PlaylistViewSet, GeocodePointViewSet
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -9,6 +9,8 @@ from rest_framework_simplejwt.views import (
 router = routers.DefaultRouter()
 # router.register(r"users", views.UserViewSet)
 # router.register(r"groups", views.GroupViewSet)
+router.register(r"playlists", PlaylistViewSet)
+router.register(r"geocode-points", GeocodePointViewSet)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
