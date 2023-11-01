@@ -1,8 +1,10 @@
 import dash
 from dash import html
 import dash_mantine_components as dmc
-from dash import html, Output, Input, State, no_update, callback
+from dash import dcc, html, Output, Input, State, no_update, callback
+from dash.exceptions import PreventUpdate
 from dash_iconify import DashIconify
+from requests import status_codes
 
 # Custom modules
 from utils import mapsharing_login as mslogin
@@ -33,7 +35,7 @@ login_component = (
                 # ),
                 dmc.Button(
                     "Login",
-                    id="load-button",
+                    id="login-button",
                     variant="gradient",
                     gradient={"from": "indigo", "to": "cyan"},
                     fullWidth=True,
@@ -57,6 +59,7 @@ layout = html.Div(
     children=[
         dmc.Container(
             [
+                dcc.Location(id="url", refresh=True),
                 dmc.Anchor(
                     dmc.Button(
                         "Previous",
@@ -77,27 +80,40 @@ layout = html.Div(
 
 
 @callback(
-    Output("loading-form", "children"),
-    Input("load-button", "n_clicks"),
-    prevent_initial_call=True,
-)
-def func(n_clicks):
-    mslogin.login("", "")
-    return no_update
-
-
-@callback(
+    Output("access-token", "data"),
+    Output("refresh-token", "data"),
+    # Output("loading-form", "children"),
     Output("username-input", "error"),
     Output("password-input", "error"),
-    Input("load-button", "n_clicks"),
+    Output("url", "pathname"),
+    Input("login-button", "n_clicks"),
     State("username-input", "value"),
     State("password-input", "value"),
     prevent_initial_call=True,
 )
-def validate_login(n_clicks, username, password):
-    print(bool(username))
-    print(username)
-    return (
-        "Username cannot be empty." if not bool(username) else False,
-        "Password cannot be empty." if not bool(password) else False,
+def login_button_handler(n_clicks, username, password):
+    if n_clicks is None:
+        raise PreventUpdate
+    is_form_valid, username_feedback, password_feedback = validate_form(
+        username, password
     )
+    if is_form_valid and n_clicks:
+        access_token, refresh_token = populate_jwt(username, password)
+        if access_token and refresh_token:
+            return access_token, refresh_token, no_update, no_update, "/"
+    return None, None, username_feedback, password_feedback, no_update
+
+
+def validate_form(username, password):
+    username_feedback = "Username cannot be empty." if not bool(username) else False
+    password_feedback = "Password cannot be empty." if not bool(password) else False
+    is_form_valid = not username_feedback and not password_feedback
+    return (
+        is_form_valid,
+        username_feedback,
+        password_feedback,
+    )
+
+
+def populate_jwt(username, password):
+    return mslogin.jwt_login(username, password)

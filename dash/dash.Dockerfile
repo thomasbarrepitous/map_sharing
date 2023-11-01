@@ -17,6 +17,6 @@ COPY . .
 EXPOSE 8050
 
 # Start the Dash application
-CMD ["python3", "app.py"]
+CMD ["python3", "-u", "app.py"]
 
 

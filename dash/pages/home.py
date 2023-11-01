@@ -1,5 +1,5 @@
 import dash
-from dash import callback, Output, Input, State, html
+from dash import callback, Output, Input, State, html, dcc
 import dash_mantine_components as dmc
 import googlemaps
 import os
@@ -13,6 +13,17 @@ dash.register_page(__name__, path="/")
 # API Auth
 gmaps = googlemaps.Client(key=os.environ.get("GCP_KEY"))
 session_token = uuid.uuid4().hex
+
+
+login_button = (
+    dmc.Anchor(
+        dmc.Button(
+            "Login",
+            leftIcon=DashIconify(icon="carbon:settings-check", width=20),
+        ),
+        href="/login",
+    ),
+)
 
 
 layout = html.Div(
@@ -35,15 +46,7 @@ layout = html.Div(
                                     # offset=2,
                                 ),
                                 dmc.Col(
-                                    dmc.Anchor(
-                                        dmc.Button(
-                                            "Login",
-                                            leftIcon=DashIconify(
-                                                icon="carbon:settings-check", width=20
-                                            ),
-                                        ),
-                                        href="/login",
-                                    ),
+                                    id="login-or-user-space",
                                     span=2,
                                 ),
                             ],
@@ -137,3 +140,10 @@ def update_map(select_value):
     return {}, [
         dl.TileLayer(),
     ]
+
+
+@callback(Output("login-or-user-space", "children"), Input("access-token", "data"))
+def authenticated_layout_handler(access_token):
+    if access_token is not None:
+        return "Hello user"
+    return login_button

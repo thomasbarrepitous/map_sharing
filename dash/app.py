@@ -1,5 +1,5 @@
 import dash
-from dash import Dash, Output, Input, State, html
+from dash import Dash, dcc, Output, Input, State, html
 
 app = Dash(
     __name__,
@@ -14,6 +14,8 @@ app = Dash(
 
 app.layout = html.Div(
     [
+        dcc.Store(id="access-token", storage_type="local", data=None),
+        dcc.Store(id="refresh-token", storage_type="local", data=None),
         dash.page_container,
     ]
 )
