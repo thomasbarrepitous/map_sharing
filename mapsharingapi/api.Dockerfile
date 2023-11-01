@@ -19,4 +19,5 @@ EXPOSE 8000
 
 # Apply migrations and start the Django API server
 CMD ["python3", "manage.py", "migrate"]
+CMD ["python3", "manage.py", "collectstatic"]
 CMD ["gunicorn", "-b", "0.0.0.0:8000", "mapsharingapi.wsgi"]
