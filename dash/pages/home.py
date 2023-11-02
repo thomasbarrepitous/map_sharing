@@ -62,13 +62,33 @@ layout = html.Div(
                                 dmc.Col(span="auto"),
                                 dmc.Col(
                                     dmc.Center(
-                                        [
-                                            html.Img(src="/assets/logo.png"),
-                                            dmc.Text("Map Sharing"),
-                                        ]
+                                        dmc.Group(
+                                            [
+                                                dmc.Image(
+                                                    src="/assets/logo.png",
+                                                    width=40,
+                                                    height=40,
+                                                ),
+                                                dmc.Text(
+                                                    "Map Sharing",
+                                                    style={
+                                                        "font-family": "Tahoma, Geneva, sans-serif",
+                                                        "font-size": "23px",
+                                                        "letter-spacing": "0px",
+                                                        "word-spacing": "-3px",
+                                                        "color": "#1B8CFF",
+                                                        "font-weight": "700",
+                                                        "text-decoration": "none",
+                                                        "font-style": "normal",
+                                                        "font-variant": "small-caps",
+                                                        "text-transform": "none",
+                                                    },
+                                                ),
+                                            ],
+                                            position="apart",
+                                        )
                                     ),
                                     span=6,
-                                    # offset=2,
                                 ),
                                 dmc.Col(
                                     id="login-area",
