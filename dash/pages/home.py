@@ -6,6 +6,7 @@ import os
 import uuid
 import dash_leaflet as dl
 from dash_iconify import DashIconify
+from dash.exceptions import PreventUpdate
 
 dash.register_page(__name__, path="/")
 
@@ -15,16 +16,39 @@ gmaps = googlemaps.Client(key=os.environ.get("GCP_KEY"))
 session_token = uuid.uuid4().hex
 
 
-login_button = (
-    dmc.Anchor(
-        dmc.Button(
-            "Login",
-            leftIcon=DashIconify(icon="carbon:settings-check", width=20),
+login_area_signed_out = dmc.Grid(
+    dmc.Col(
+        dmc.Anchor(
+            dmc.Button(
+                "Login",
+                leftIcon=DashIconify(icon="carbon:settings-check", width=20),
+            ),
+            href="/login",
         ),
-        href="/login",
+        span="content",
     ),
+    justify="center",
+    align="center",
 )
 
+login_area_signed_in = dmc.Grid(
+    [
+        dmc.Col(html.P("Hello User"), span=5),
+        dmc.Col(
+            dmc.Anchor(
+                dmc.Button(
+                    "Sign out",
+                    leftIcon=DashIconify(icon="pepicons-pop:leave", width=20),
+                    id="sign-out-btn",
+                ),
+                href="/login",
+            ),
+            span=7,
+        ),
+    ],
+    align="center",
+    justify="center",
+)
 
 layout = html.Div(
     [
@@ -35,6 +59,7 @@ layout = html.Div(
                     children=[
                         dmc.Grid(
                             [
+                                dmc.Col(span="auto"),
                                 dmc.Col(
                                     dmc.Center(
                                         [
@@ -42,12 +67,12 @@ layout = html.Div(
                                             dmc.Text("Map Sharing"),
                                         ]
                                     ),
-                                    span=8,
+                                    span=6,
                                     # offset=2,
                                 ),
                                 dmc.Col(
-                                    id="login-or-user-space",
-                                    span=2,
+                                    id="login-area",
+                                    span="auto",
                                 ),
                             ],
                             align="center",
@@ -142,8 +167,20 @@ def update_map(select_value):
     ]
 
 
-@callback(Output("login-or-user-space", "children"), Input("access-token", "data"))
+@callback(Output("login-area", "children"), Input("access-token", "data"))
 def authenticated_layout_handler(access_token):
     if access_token is not None:
-        return "Hello user"
-    return login_button
+        return login_area_signed_in
+    return login_area_signed_out
+
+
+@callback(
+    Output("access-token", "data", allow_duplicate=True),
+    Output("refresh-token", "data", allow_duplicate=True),
+    Input("sign-out-btn", "n_clicks"),
+    prevent_initial_call=True,
+)
+def disconnect_user(n_clicks):
+    if n_clicks is None:
+        raise PreventUpdate
+    return None, None
