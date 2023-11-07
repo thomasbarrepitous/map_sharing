@@ -120,3 +120,42 @@ def validate_login(n_clicks, username, password, confirm_password, email):
         validate_password(password),
         valide_confirm_password(password, confirm_password),
     )
+
+
+@callback(
+    Output("loading-form", "loading"),
+    Output("signup-create-btn", "disabled"),
+    Output("signup-create-btn", "children"),
+    Output("signup-create-btn", "leftIcon"),
+    Input("signup-create-btn", "n_clicks"),
+    State("signup-username-input", "value"),
+    State("signup-password-input", "value"),
+    State("signup-confirm-password-input", "value"),
+    State("signup-email-input", "value"),
+    prevent_initial_call=True,
+)
+def create_account(n_clicks, username, password, confirm_password, email):
+    if n_clicks:
+        if (
+            not validate_username(username)
+            and not validate_email(email)
+            and not validate_password(password)
+            and not valide_confirm_password(password, confirm_password)
+        ):
+            if mslogin.create_account(username, password, email):
+                return (
+                    False,
+                    True,
+                    "Account created successfully",
+                    DashIconify(icon="uil:check"),
+                )
+            else:
+                return (
+                    False,
+                    False,
+                    "An error occured while creating your account",
+                    DashIconify(icon="uil:warning"),
+                )
+            return True, True, "Creating account...", DashIconify(icon="uil:sync")
+        return False, False, "Create account", DashIconify(icon="uil:next")
+    return False, False, "Create account", DashIconify(icon="uil:next")
