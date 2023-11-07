@@ -164,5 +164,8 @@ cython_debug/
 
 # Mac files
 **/.DS_Store
+.DS_Store
 
+# static files
 mapsharingapi/static
+
