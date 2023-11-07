@@ -17,9 +17,10 @@ router.register(r"geocode-points", GeocodePointViewSet)
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", include(router.urls)),
-    path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
-    path("api/login/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
-    path("api/logi/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
-    path("api/register/", RegisterView.as_view(), name="sign_up"),
+    path("api/", include(router.urls)),
+    path("api/account/login/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path(
+        "api/account/login/refresh/", TokenRefreshView.as_view(), name="token_refresh"
+    ),
+    path("api/account/register/", RegisterView.as_view(), name="sign_up"),
 ]
