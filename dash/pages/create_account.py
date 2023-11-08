@@ -1,5 +1,5 @@
 import dash
-from dash import html
+from dash import html, dcc
 import dash_mantine_components as dmc
 from dash import html, Output, Input, State, no_update, callback
 from dash_iconify import DashIconify
@@ -61,6 +61,7 @@ signup_form = (
 
 layout = html.Div(
     children=[
+        dcc.Location(id="url-login"),
         dmc.Container(
             [
                 dmc.Anchor(
@@ -133,6 +134,7 @@ def validate_login(n_clicks, username, password, confirm_password, email):
     Output("signup-create-btn", "disabled"),
     Output("signup-create-btn", "children"),
     Output("signup-create-btn", "leftIcon"),
+    Output("url-login", "pathname"),
     Input("signup-create-btn", "n_clicks"),
     State("signup-username-input", "value"),
     State("signup-password-input", "value"),
@@ -154,6 +156,7 @@ def create_account(n_clicks, username, password, confirm_password, email):
                     True,
                     "Account created successfully",
                     DashIconify(icon="uil:check"),
+                    "/",
                 )
             else:
                 return (
@@ -161,7 +164,7 @@ def create_account(n_clicks, username, password, confirm_password, email):
                     False,
                     "An error occured while creating your account",
                     DashIconify(icon="uil:warning"),
+                    no_update,
                 )
-            return True, True, "Creating account...", DashIconify(icon="uil:sync")
-        return False, False, "Create account", DashIconify(icon="uil:next")
-    return False, False, "Create account", DashIconify(icon="uil:next")
+        return False, False, "Create account", DashIconify(icon="uil:next"), no_update
+    return False, False, "Create account", DashIconify(icon="uil:next"), no_update
