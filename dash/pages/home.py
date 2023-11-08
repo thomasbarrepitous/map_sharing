@@ -16,21 +16,6 @@ gmaps = googlemaps.Client(key=os.environ.get("GCP_KEY"))
 session_token = uuid.uuid4().hex
 
 
-login_area_signed_out = dmc.Grid(
-    dmc.Col(
-        dmc.Anchor(
-            dmc.Button(
-                "Login",
-                leftIcon=DashIconify(icon="carbon:settings-check", width=20),
-            ),
-            href="/login",
-        ),
-        span="content",
-    ),
-    justify="center",
-    align="center",
-)
-
 login_area_signed_in = dmc.Grid(
     [
         dmc.Col(html.P("Hello User"), span=5),
@@ -50,60 +35,77 @@ login_area_signed_in = dmc.Grid(
     justify="center",
 )
 
-layout = html.Div(
+signed_out_header = dmc.Container(
     [
-        dmc.Container(
-            [
-                dmc.Header(
-                    height=60,
-                    children=[
-                        dmc.Grid(
-                            [
-                                dmc.Col(span="auto"),
+        dmc.Header(
+            height=60,
+            children=[
+                dmc.Grid(
+                    [
+                        dmc.Col(span="auto"),
+                        dmc.Col(
+                            dmc.Center(
+                                dmc.Group(
+                                    [
+                                        dmc.Image(
+                                            src="/assets/logo.png",
+                                            width=40,
+                                            height=40,
+                                        ),
+                                        dmc.Text(
+                                            "Map Sharing",
+                                            style={
+                                                "font-family": "Tahoma, Geneva, sans-serif",
+                                                "font-size": "23px",
+                                                "letter-spacing": "0px",
+                                                "word-spacing": "-3px",
+                                                "color": "#1B8CFF",
+                                                "font-weight": "700",
+                                                "text-decoration": "none",
+                                                "font-style": "normal",
+                                                "font-variant": "small-caps",
+                                                "text-transform": "none",
+                                            },
+                                        ),
+                                    ],
+                                    position="apart",
+                                )
+                            ),
+                            span=6,
+                        ),
+                        dmc.Col(
+                            dmc.Grid(
                                 dmc.Col(
-                                    dmc.Center(
-                                        dmc.Group(
-                                            [
-                                                dmc.Image(
-                                                    src="/assets/logo.png",
-                                                    width=40,
-                                                    height=40,
-                                                ),
-                                                dmc.Text(
-                                                    "Map Sharing",
-                                                    style={
-                                                        "font-family": "Tahoma, Geneva, sans-serif",
-                                                        "font-size": "23px",
-                                                        "letter-spacing": "0px",
-                                                        "word-spacing": "-3px",
-                                                        "color": "#1B8CFF",
-                                                        "font-weight": "700",
-                                                        "text-decoration": "none",
-                                                        "font-style": "normal",
-                                                        "font-variant": "small-caps",
-                                                        "text-transform": "none",
-                                                    },
-                                                ),
-                                            ],
-                                            position="apart",
-                                        )
+                                    dmc.Anchor(
+                                        dmc.Button(
+                                            "Login",
+                                            leftIcon=DashIconify(
+                                                icon="carbon:settings-check", width=20
+                                            ),
+                                        ),
+                                        href="/login",
                                     ),
-                                    span=6,
+                                    span="content",
                                 ),
-                                dmc.Col(
-                                    id="login-area",
-                                    span="auto",
-                                ),
-                            ],
-                            align="center",
-                            justify="flex-end",
+                                justify="center",
+                                align="center",
+                            ),
+                            span="auto",
                         ),
                     ],
-                    style={"backgroundColor": "white"},
-                )
+                    align="center",
+                    justify="flex-end",
+                ),
             ],
-            style={"marginTop": 20, "marginbottom": 20},
-        ),
+            style={"backgroundColor": "white"},
+        )
+    ],
+    style={"marginTop": 20, "marginbottom": 20},
+)
+
+signed_out_layout = html.Div(
+    [
+        signed_out_header,
         dmc.Container(
             [
                 dmc.Select(
@@ -127,7 +129,7 @@ layout = html.Div(
                         center=[40, 15],
                         zoom=2,
                         id="map",
-                        style={"height": "50vh", "z-index": 0, "tabindex": -2},
+                        style={"height": "75vh", "z-index": 0, "tabindex": -2},
                     ),
                     id="map-container",
                 ),
@@ -136,6 +138,23 @@ layout = html.Div(
         ),
     ]
 )
+
+signed_in_layout = html.Div("signed in")
+
+layout = html.Div(id="home-layout")
+
+
+def validate_token(access_token):
+    if access_token is None:
+        return False
+    return True
+
+
+@callback(Output("home-layout", "children"), Input("access-token", "data"))
+def authenticated_layout_handler(access_token):
+    if validate_token(access_token):
+        return signed_in_layout
+    return signed_out_layout
 
 
 @callback(
@@ -185,13 +204,6 @@ def update_map(select_value):
     return {}, [
         dl.TileLayer(),
     ]
-
-
-@callback(Output("login-area", "children"), Input("access-token", "data"))
-def authenticated_layout_handler(access_token):
-    if access_token is not None:
-        return login_area_signed_in
-    return login_area_signed_out
 
 
 @callback(
