@@ -12,8 +12,8 @@ def create_account(username: str, password: str, email: str):
     return False
 
 
-def jwt_login(username: str, password: str):
-    data = {"username": username, "password": password}
+def jwt_login(email: str, password: str):
+    data = {"email": email, "password": password}
     r = requests.post(
         f"{AUTH_API_URL}login/",
         data=data,

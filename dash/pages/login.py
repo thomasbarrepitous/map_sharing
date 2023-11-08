@@ -17,8 +17,8 @@ login_component = (
             id="loading-form",
             children=[
                 dmc.TextInput(
-                    label="Username",
-                    placeholder="Your username",
+                    label="Email",
+                    placeholder="Your email",
                     icon=DashIconify(icon="radix-icons:person"),
                     id="username-input",
                 ),
@@ -91,26 +91,25 @@ layout = html.Div(
     State("password-input", "value"),
     prevent_initial_call=True,
 )
-def login_button_handler(n_clicks, username, password):
+def login_button_handler(n_clicks, email, password):
     if n_clicks is None:
         raise PreventUpdate
-    is_form_valid, username_feedback, password_feedback = validate_form(
-        username, password
-    )
-    if is_form_valid and n_clicks:
-        access_token, refresh_token = populate_jwt(username, password)
-        if access_token and refresh_token:
-            return access_token, refresh_token, no_update, no_update, "/"
-    return None, None, username_feedback, password_feedback, no_update
+    is_form_valid, email_feedback, password_feedback = validate_form(email, password)
+    if n_clicks:
+        if is_form_valid:
+            access_token, refresh_token = populate_jwt(email, password)
+            if access_token and refresh_token:
+                return access_token, refresh_token, no_update, no_update, "/"
+    return None, None, email_feedback, password_feedback, no_update
 
 
-def validate_form(username, password):
-    username_feedback = "Username cannot be empty." if not bool(username) else False
+def validate_form(email, password):
+    email_feedback = "Email cannot be empty." if not bool(email) else False
     password_feedback = "Password cannot be empty." if not bool(password) else False
-    is_form_valid = not username_feedback and not password_feedback
+    is_form_valid = not email_feedback and not password_feedback
     return (
         is_form_valid,
-        username_feedback,
+        email_feedback,
         password_feedback,
     )
 

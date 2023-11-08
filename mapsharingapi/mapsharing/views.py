@@ -1,5 +1,4 @@
-from rest_framework import viewsets
-from rest_framework import permissions
+from rest_framework import viewsets, permissions, status
 from .models import Playlist, GeocodePoint
 from .serializers import PlaylistSerializer, GeocodePointSerializer, UserSerializer
 from rest_framework.views import APIView
@@ -11,7 +10,7 @@ class RegisterView(APIView):
         serializer = UserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class PlaylistViewSet(viewsets.ModelViewSet):
