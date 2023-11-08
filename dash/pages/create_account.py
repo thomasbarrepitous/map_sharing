@@ -3,6 +3,7 @@ from dash import html
 import dash_mantine_components as dmc
 from dash import html, Output, Input, State, no_update, callback
 from dash_iconify import DashIconify
+import re
 
 # Custom modules
 from utils import mapsharing_login as mslogin
@@ -86,7 +87,12 @@ def validate_username(username: str):
 
 
 def validate_email(email: str):
-    return "Email cannot be empty." if not bool(email) else False
+    email_format = r"^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$"
+    if not bool(email):
+        return "Email cannot be empty."
+    if not re.match(email_format, email):
+        return "Email format is not valid."
+    return False
 
 
 def validate_password(password: str):

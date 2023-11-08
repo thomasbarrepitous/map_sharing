@@ -115,4 +115,4 @@ def validate_form(email, password):
 
 
 def populate_jwt(username, password):
-    return mslogin.jwt_login(username, password)
+    return mslogin.login_jwt(username, password)
