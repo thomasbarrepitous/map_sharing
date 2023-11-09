@@ -1,12 +1,11 @@
 import dash
 from dash import callback, Output, Input, State, html, dcc
-import dash_mantine_components as dmc
 import googlemaps
 import os
 import uuid
 import dash_leaflet as dl
-from dash_iconify import DashIconify
 from dash.exceptions import PreventUpdate
+import utils.components.home as home_components
 
 dash.register_page(__name__, path="/")
 
@@ -16,130 +15,7 @@ gmaps = googlemaps.Client(key=os.environ.get("GCP_KEY"))
 session_token = uuid.uuid4().hex
 
 
-login_area_signed_in = dmc.Grid(
-    [
-        dmc.Col(html.P("Hello User"), span=5),
-        dmc.Col(
-            dmc.Anchor(
-                dmc.Button(
-                    "Sign out",
-                    leftIcon=DashIconify(icon="pepicons-pop:leave", width=20),
-                    id="sign-out-btn",
-                ),
-                href="/login",
-            ),
-            span=7,
-        ),
-    ],
-    align="center",
-    justify="center",
-)
-
-signed_out_header = dmc.Container(
-    [
-        dmc.Header(
-            height=60,
-            children=[
-                dmc.Grid(
-                    [
-                        dmc.Col(span="auto"),
-                        dmc.Col(
-                            dmc.Center(
-                                dmc.Group(
-                                    [
-                                        dmc.Image(
-                                            src="/assets/logo.png",
-                                            width=40,
-                                            height=40,
-                                        ),
-                                        dmc.Text(
-                                            "Map Sharing",
-                                            style={
-                                                "font-family": "Tahoma, Geneva, sans-serif",
-                                                "font-size": "23px",
-                                                "letter-spacing": "0px",
-                                                "word-spacing": "-3px",
-                                                "color": "#1B8CFF",
-                                                "font-weight": "700",
-                                                "text-decoration": "none",
-                                                "font-style": "normal",
-                                                "font-variant": "small-caps",
-                                                "text-transform": "none",
-                                            },
-                                        ),
-                                    ],
-                                    position="apart",
-                                )
-                            ),
-                            span=6,
-                        ),
-                        dmc.Col(
-                            dmc.Grid(
-                                dmc.Col(
-                                    dmc.Anchor(
-                                        dmc.Button(
-                                            "Login",
-                                            leftIcon=DashIconify(
-                                                icon="carbon:settings-check", width=20
-                                            ),
-                                        ),
-                                        href="/login",
-                                    ),
-                                    span="content",
-                                ),
-                                justify="center",
-                                align="center",
-                            ),
-                            span="auto",
-                        ),
-                    ],
-                    align="center",
-                    justify="flex-end",
-                ),
-            ],
-            style={"backgroundColor": "white"},
-        )
-    ],
-    style={"marginTop": 20, "marginbottom": 20},
-)
-
-signed_out_layout = html.Div(
-    [
-        signed_out_header,
-        dmc.Container(
-            [
-                dmc.Select(
-                    data=[],
-                    value="",
-                    clearable=True,
-                    nothingFound="No results found",
-                    searchable=True,
-                    id="select",
-                ),
-            ],
-            style={"marginTop": 20, "marginbottom": 20},
-        ),
-        dmc.Container(
-            [
-                html.Div(
-                    dl.Map(
-                        [
-                            dl.TileLayer(),
-                        ],
-                        center=[40, 15],
-                        zoom=2,
-                        id="map",
-                        style={"height": "75vh", "z-index": 0, "tabindex": -2},
-                    ),
-                    id="map-container",
-                ),
-            ],
-            style={"marginTop": 20, "marginbottom": 20},
-        ),
-    ]
-)
-
-signed_in_layout = html.Div("signed in")
+# Layout
 
 layout = html.Div(id="home-layout")
 
@@ -153,8 +29,8 @@ def validate_token(access_token):
 @callback(Output("home-layout", "children"), Input("access-token", "data"))
 def authenticated_layout_handler(access_token):
     if validate_token(access_token):
-        return signed_in_layout
-    return signed_out_layout
+        return home_components.signed_in_layout
+    return home_components.signed_out_layout
 
 
 @callback(

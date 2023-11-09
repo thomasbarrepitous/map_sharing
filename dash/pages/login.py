@@ -39,6 +39,7 @@ login_component = (
                     variant="gradient",
                     gradient={"from": "indigo", "to": "cyan"},
                     fullWidth=True,
+                    type="submit",
                 ),
                 dmc.Anchor(
                     dmc.Button(
