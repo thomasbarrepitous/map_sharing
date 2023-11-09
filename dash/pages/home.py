@@ -92,3 +92,14 @@ def disconnect_user(n_clicks):
     if n_clicks is None:
         raise PreventUpdate
     return None, None
+
+
+@callback(
+    Output("playlist-accordion", "children"),
+    Input("access-token", "data"),
+    prevent_initial_call=True,
+)
+def update_playlists(access_token):
+    if access_token is None:
+        raise PreventUpdate
+    return home_components.playlist_accordion

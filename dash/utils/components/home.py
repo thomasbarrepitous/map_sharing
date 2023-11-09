@@ -234,6 +234,7 @@ playlist_layout = dmc.Grid(
                         value="flexibility",
                     ),
                 ],
+                id="playlist-accordion",
             )
         ),
     ]
