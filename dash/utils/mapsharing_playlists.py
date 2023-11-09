@@ -16,8 +16,7 @@ def fetch_all_playlists(username: str, password: str, email: str):
 
 def remove_playlist_by_id(id: int, access_token: str):
     headers = {
-        "User-Agent": "insomnia/8.3.0",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjk5NjI1MDY3LCJpYXQiOjE2OTk1Mzg2NjcsImp0aSI6IjczMzM4MjNjZDhmMzRmODViYzRmM2YxNjY5NTYzNzY5IiwidXNlcl9pZCI6N30.aIs84W0If718ESSLdMz-9SGv_f9ol4sVKi3sMiSCLJE",
+        "Authorization": f"Bearer {access_token}",
     }
     r = requests.post(
         f"{PLAYLIST_API_URL}{id}/",

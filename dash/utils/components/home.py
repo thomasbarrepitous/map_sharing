@@ -3,7 +3,6 @@ from dash_iconify import DashIconify
 from dash import html
 import dash_leaflet as dl
 
-
 ####################
 #### HEADERS #######
 ####################
@@ -207,38 +206,41 @@ outside_playlist_buttons_layout = dmc.Grid(
     ]
 )
 
+
 # Base layout for the playlist container
-playlist_layout = dmc.Grid(
-    [
-        dmc.Col(outside_playlist_buttons_layout, span=12),
-        dmc.Col(
-            dmc.Accordion(
-                children=[
-                    dmc.AccordionItem(
-                        [
-                            dmc.AccordionControl("Customization"),
-                            dmc.AccordionPanel(
-                                "Colors, fonts, shadows and many other parts are customizable to fit your design needs"
-                            ),
-                        ],
-                        value="customization",
-                    ),
-                    dmc.AccordionItem(
-                        [
-                            dmc.AccordionControl("Flexibility"),
-                            dmc.AccordionPanel(
-                                "Configure temp appearance and behavior with vast amount of settings or overwrite any part of "
-                                "component styles "
-                            ),
-                        ],
-                        value="flexibility",
-                    ),
-                ],
-                id="playlist-accordion",
-            )
-        ),
-    ]
-)
+def generate_playlist(playlist: dict):
+    return dmc.Grid(
+        [
+            dmc.Col(outside_playlist_buttons_layout, span=12),
+            dmc.Col(
+                dmc.Accordion(
+                    children=[
+                        dmc.AccordionItem(
+                            [
+                                dmc.AccordionControl("Customization"),
+                                dmc.AccordionPanel(
+                                    "Colors, fonts, shadows and many other parts are customizable to fit your design needs"
+                                ),
+                            ],
+                            value="customization",
+                        ),
+                        dmc.AccordionItem(
+                            [
+                                dmc.AccordionControl("Flexibility"),
+                                dmc.AccordionPanel(
+                                    "Configure temp appearance and behavior with vast amount of settings or overwrite any part of "
+                                    "component styles "
+                                ),
+                            ],
+                            value="flexibility",
+                        ),
+                    ],
+                    id="playlist-accordion",
+                )
+            ),
+            str(playlist),
+        ]
+    )
 
 
 ####################
@@ -286,7 +288,7 @@ signed_in_layout = html.Div(
                             span=8,
                         ),
                         dmc.Col(
-                            playlist_layout,
+                            generate_playlist({"foo": "bar"}),
                             span=4,
                         ),
                     ]
