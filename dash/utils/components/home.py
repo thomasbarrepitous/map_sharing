@@ -196,17 +196,17 @@ outside_playlist_buttons_layout = dmc.Grid(
                 gradient={"from": "teal", "to": "lime", "deg": 105},
                 fullWidth=True,
             ),
-            span=6,
+            span="auto",
         ),
-        dmc.Col(
-            dmc.Button(
-                "Hide Menu",
-                leftIcon=DashIconify(icon="mdi:hide", width=20),
-                color="gray",
-                fullWidth=True,
-            ),
-            span=6,
-        ),
+        # dmc.Col(
+        #     dmc.Button(
+        #         "Hide Menu",
+        #         leftIcon=DashIconify(icon="mdi:hide", width=20),
+        #         color="gray",
+        #         fullWidth=True,
+        #     ),
+        #     span=6,
+        # ),
     ]
 )
 
@@ -260,14 +260,34 @@ def display_signed_in_layout(username: str):
             display_signed_in_header(username),
             dmc.Container(
                 [
-                    dmc.Select(
-                        data=[],
-                        value="",
-                        clearable=True,
-                        nothingFound="No results found",
-                        searchable=True,
-                        id="select",
-                    ),
+                    dmc.Grid(
+                        [
+                            dmc.Col(
+                                dmc.Select(
+                                    data=[],
+                                    value="",
+                                    clearable=True,
+                                    nothingFound="No results found",
+                                    searchable=True,
+                                    id="select",
+                                ),
+                                span="auto",
+                            ),
+                            dmc.Col(
+                                dmc.ActionIcon(
+                                    DashIconify(icon="mdi:hide", width=20),
+                                    size="lg",
+                                    variant="filled",
+                                    id="hide-menu-btn",
+                                    mb=10,
+                                    n_clicks=0,
+                                ),
+                                id="hide-menu-btn-container",
+                                span="content",
+                            ),
+                        ],
+                        id="search-container",
+                    )
                 ],
                 style={"marginTop": 20, "marginbottom": 20},
             ),
@@ -292,7 +312,7 @@ def display_signed_in_layout(username: str):
                                     ),
                                     id="map-container",
                                 ),
-                                span=8,
+                                span="auto",
                             ),
                             dmc.Col(
                                 id="playlist-container",

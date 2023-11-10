@@ -7,6 +7,8 @@ import dash_leaflet as dl
 from dash.exceptions import PreventUpdate
 import utils.components.home as home_components
 import utils.mapsharing_playlists as msp
+import dash_mantine_components as dmc
+from dash_iconify import DashIconify
 
 dash.register_page(__name__, path="/")
 
@@ -89,14 +91,50 @@ def update_map(select_value):
 
 @callback(
     Output("playlist-container", "children"),
+    Output("playlist-container", "span"),
+    Input("hide-menu-btn", "n_clicks"),
     Input("access-token", "data"),
-    # prevent_initial_call=True,
 )
-def update_playlist_container(access_token):
-    if access_token:
-        playlists = msp.fetch_all_playlists(access_token)
-        return home_components.generate_playlists_menu(playlists)
-    return []
+def update_playlist_container(n_clicks, access_token):
+    print(n_clicks, flush=True)
+    if n_clicks is None:
+        raise PreventUpdate
+    if n_clicks % 2 == 0:
+        if access_token:
+            # Probably quite expensive to fetch all playlists on every click
+            # TODO: Handle caching using background callbacks
+            # TODO: Delay for 1 second to avoid rate limiting
+            playlists = msp.fetch_all_playlists(access_token)
+            return home_components.generate_playlists_menu(playlists), 4
+    return [], 0
+
+
+@callback(
+    Output("hide-menu-btn-container", "children"),
+    Input("hide-menu-btn", "n_clicks"),
+)
+def toggle_hide_menu_btn(n_clicks):
+    if n_clicks is None:
+        raise PreventUpdate
+    if n_clicks % 2 == 0:
+        return dmc.ActionIcon(
+            DashIconify(icon="mdi:hide", width=20),
+            size="lg",
+            variant="filled",
+            color="gray",
+            id="hide-menu-btn",
+            mb=10,
+            n_clicks=n_clicks,
+        )
+    return dmc.ActionIcon(
+        DashIconify(icon="mdi:menu", width=20),
+        size="lg",
+        variant="filled",
+        color="lime",
+        id="hide-menu-btn",
+        mb=10,
+        n_clicks=n_clicks,
+    )
 
 
 @callback(
