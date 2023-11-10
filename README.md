@@ -1,5 +1,14 @@
 # GeoPoints Sharing App
 
+
+- [Overview](#overview)
+- [Features](#features)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Usage](#usage)
+- [API Documentation](#api-documentation)
+- [License](#license)
+
 ## Overview
 
 This project is a geographic points sharing application built using Python, Django Rest Framework (DRF), and Dash. The application allows users to save and organize locations, create collections of points, and share them with others. The primary focus of the project is to showcase proficiency in REST APIs, JWT authentication, caching, and other relevant skills.
