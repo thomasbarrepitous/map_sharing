@@ -3,3 +3,4 @@ dash_iconify==0.1.2
 dash_leaflet==1.0.11
 dash_mantine_components==0.12.1
 googlemaps==4.10.0
+pyjwt==2.8.0

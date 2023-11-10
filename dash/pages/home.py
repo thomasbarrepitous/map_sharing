@@ -27,10 +27,14 @@ def validate_token(access_token):
     return True
 
 
-@callback(Output("home-layout", "children"), Input("access-token", "data"))
-def authenticated_layout_handler(access_token):
+@callback(
+    Output("home-layout", "children"),
+    Input("access-token", "data"),
+    Input("username", "data"),
+)
+def authenticated_layout_handler(access_token, username):
     if validate_token(access_token):
-        return home_components.display_signed_in_layout("blabla")
+        return home_components.display_signed_in_layout(username)
     return home_components.signed_out_layout
 
 

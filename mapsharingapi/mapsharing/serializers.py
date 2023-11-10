@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Playlist, GeocodePoint, User
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -27,3 +28,14 @@ class PlaylistSerializer(serializers.ModelSerializer):
     class Meta:
         model = Playlist
         fields = ("id", "title", "description", "created_at", "user")
+
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        # Add custom claims
+        token["username"] = user.username
+        token["email"] = user.email
+        return token

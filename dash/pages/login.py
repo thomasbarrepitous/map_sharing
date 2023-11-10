@@ -81,6 +81,16 @@ layout = html.Div(
 
 
 @callback(
+    Output("username", "data"),
+    Input("access-token", "data"),
+)
+def decode_jwt(access_token):
+    if access_token:
+        return mslogin.decode_jwt(access_token).get("username")
+    return None
+
+
+@callback(
     Output("access-token", "data"),
     Output("refresh-token", "data"),
     # Output("loading-form", "children"),

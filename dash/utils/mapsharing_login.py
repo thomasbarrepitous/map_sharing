@@ -1,7 +1,9 @@
 import os
 import requests
+import jwt
 
 AUTH_API_URL = os.environ.get("AUTH_API_URL", "http://127.0.0.1:8000/api/account/")
+DJANGO_SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 
 
 def create_account(username: str, password: str, email: str):
@@ -21,3 +23,10 @@ def login_jwt(email: str, password: str):
     if r.status_code == 200:
         return r.json()["access"], r.json()["refresh"]
     return None, None
+
+
+def decode_jwt(access_token: str) -> dict:
+    decoded_data = jwt.decode(
+        jwt=access_token, key=DJANGO_SECRET_KEY, algorithms=["HS256"]
+    )
+    return decoded_data

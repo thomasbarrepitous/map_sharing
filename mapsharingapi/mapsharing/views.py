@@ -1,8 +1,14 @@
 from rest_framework import viewsets, permissions, status
 from .models import Playlist, GeocodePoint, User
-from .serializers import PlaylistSerializer, GeocodePointSerializer, UserSerializer
+from .serializers import (
+    PlaylistSerializer,
+    GeocodePointSerializer,
+    UserSerializer,
+    MyTokenObtainPairSerializer,
+)
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 
 class RegisterView(APIView):
@@ -46,3 +52,8 @@ class GeocodePointViewSet(viewsets.ModelViewSet):
     queryset = GeocodePoint.objects.all()
     serializer_class = GeocodePointSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+
+# Override the TokenObtainPairView class to return the user id
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
