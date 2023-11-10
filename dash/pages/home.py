@@ -6,6 +6,7 @@ import uuid
 import dash_leaflet as dl
 from dash.exceptions import PreventUpdate
 import utils.components.home as home_components
+import utils.mapsharing_playlists as msp
 
 dash.register_page(__name__, path="/")
 
@@ -29,7 +30,7 @@ def validate_token(access_token):
 @callback(Output("home-layout", "children"), Input("access-token", "data"))
 def authenticated_layout_handler(access_token):
     if validate_token(access_token):
-        return home_components.signed_in_layout
+        return home_components.display_signed_in_layout("blabla")
     return home_components.signed_out_layout
 
 
@@ -83,6 +84,18 @@ def update_map(select_value):
 
 
 @callback(
+    Output("playlist-container", "children"),
+    Input("access-token", "data"),
+    # prevent_initial_call=True,
+)
+def update_playlist_container(access_token):
+    if access_token:
+        playlists = msp.fetch_all_playlists(access_token)
+        return home_components.generate_playlists_menu(playlists)
+    return []
+
+
+@callback(
     Output("access-token", "data", allow_duplicate=True),
     Output("refresh-token", "data", allow_duplicate=True),
     Input("sign-out-btn", "n_clicks"),
@@ -92,14 +105,3 @@ def disconnect_user(n_clicks):
     if n_clicks is None:
         raise PreventUpdate
     return None, None
-
-
-@callback(
-    Output("playlist-accordion", "children"),
-    Input("access-token", "data"),
-    prevent_initial_call=True,
-)
-def update_playlists(access_token):
-    if access_token is None:
-        raise PreventUpdate
-    return home_components.playlist_accordion

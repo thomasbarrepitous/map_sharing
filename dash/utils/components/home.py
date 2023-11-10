@@ -7,25 +7,28 @@ import dash_leaflet as dl
 #### HEADERS #######
 ####################
 
-login_area_signed_in = dmc.Grid(
-    [
-        dmc.Col(html.P("Hello User"), span=5),
-        dmc.Col(
-            dmc.Anchor(
-                dmc.Button(
-                    "Sign out",
-                    leftIcon=DashIconify(icon="pepicons-pop:leave", width=20),
-                    id="sign-out-btn",
-                    color="red",
+
+def display_logout_area(username: str):
+    return dmc.Grid(
+        [
+            dmc.Col(html.P(f"Hello {username}"), span=5),
+            dmc.Col(
+                dmc.Anchor(
+                    dmc.Button(
+                        "Sign out",
+                        leftIcon=DashIconify(icon="pepicons-pop:leave", width=20),
+                        id="sign-out-btn",
+                        color="red",
+                    ),
+                    href="/login",
                 ),
-                href="/login",
+                span=7,
             ),
-            span=7,
-        ),
-    ],
-    align="center",
-    justify="center",
-)
+        ],
+        align="center",
+        justify="center",
+    )
+
 
 # Header for signed out users
 signed_out_header = dmc.Container(
@@ -98,58 +101,59 @@ signed_out_header = dmc.Container(
 
 
 # Header for signed in users
-signed_in_header = dmc.Container(
-    [
-        dmc.Header(
-            height=60,
-            children=[
-                dmc.Grid(
-                    [
-                        dmc.Col(span="auto"),
-                        dmc.Col(
-                            dmc.Center(
-                                dmc.Group(
-                                    [
-                                        dmc.Image(
-                                            src="/assets/logo.png",
-                                            width=40,
-                                            height=40,
-                                        ),
-                                        dmc.Text(
-                                            "Map Sharing",
-                                            style={
-                                                "font-family": "Tahoma, Geneva, sans-serif",
-                                                "font-size": "23px",
-                                                "letter-spacing": "0px",
-                                                "word-spacing": "-3px",
-                                                "color": "#1B8CFF",
-                                                "font-weight": "700",
-                                                "text-decoration": "none",
-                                                "font-style": "normal",
-                                                "font-variant": "small-caps",
-                                                "text-transform": "none",
-                                            },
-                                        ),
-                                    ],
-                                    position="apart",
-                                )
+def display_signed_in_header(username: str):
+    return dmc.Container(
+        [
+            dmc.Header(
+                height=60,
+                children=[
+                    dmc.Grid(
+                        [
+                            dmc.Col(span="auto"),
+                            dmc.Col(
+                                dmc.Center(
+                                    dmc.Group(
+                                        [
+                                            dmc.Image(
+                                                src="/assets/logo.png",
+                                                width=40,
+                                                height=40,
+                                            ),
+                                            dmc.Text(
+                                                "Map Sharing",
+                                                style={
+                                                    "font-family": "Tahoma, Geneva, sans-serif",
+                                                    "font-size": "23px",
+                                                    "letter-spacing": "0px",
+                                                    "word-spacing": "-3px",
+                                                    "color": "#1B8CFF",
+                                                    "font-weight": "700",
+                                                    "text-decoration": "none",
+                                                    "font-style": "normal",
+                                                    "font-variant": "small-caps",
+                                                    "text-transform": "none",
+                                                },
+                                            ),
+                                        ],
+                                        position="apart",
+                                    )
+                                ),
+                                span=6,
                             ),
-                            span=6,
-                        ),
-                        dmc.Col(
-                            login_area_signed_in,
-                            span="auto",
-                        ),
-                    ],
-                    align="center",
-                    justify="flex-end",
-                ),
-            ],
-            style={"backgroundColor": "white"},
-        )
-    ],
-    style={"marginTop": 20, "marginbottom": 20},
-)
+                            dmc.Col(
+                                display_logout_area(username),
+                                span="auto",
+                            ),
+                        ],
+                        align="center",
+                        justify="flex-end",
+                    ),
+                ],
+                style={"backgroundColor": "white"},
+            )
+        ],
+        style={"marginTop": 20, "marginbottom": 20},
+    )
 
 
 ####################
@@ -207,38 +211,39 @@ outside_playlist_buttons_layout = dmc.Grid(
 )
 
 
+def single_geocode_template(point: dict):
+    return dmc.AccordionItem(
+        [
+            dmc.AccordionControl(point["title"]),
+            dmc.AccordionPanel(
+                point["description"],
+            ),
+        ],
+    )
+
+
+def single_playlist_template(playlist: dict):
+    return dmc.AccordionItem(
+        [
+            dmc.AccordionControl(playlist["title"]),
+            dmc.AccordionPanel(
+                playlist["description"],
+            ),
+        ],
+        value=f'{playlist["id"]}',
+    )
+
+
 # Base layout for the playlist container
-def generate_playlist(playlist: dict):
+def generate_playlists_menu(playlists: list):
     return dmc.Grid(
         [
             dmc.Col(outside_playlist_buttons_layout, span=12),
             dmc.Col(
                 dmc.Accordion(
-                    children=[
-                        dmc.AccordionItem(
-                            [
-                                dmc.AccordionControl("Customization"),
-                                dmc.AccordionPanel(
-                                    "Colors, fonts, shadows and many other parts are customizable to fit your design needs"
-                                ),
-                            ],
-                            value="customization",
-                        ),
-                        dmc.AccordionItem(
-                            [
-                                dmc.AccordionControl("Flexibility"),
-                                dmc.AccordionPanel(
-                                    "Configure temp appearance and behavior with vast amount of settings or overwrite any part of "
-                                    "component styles "
-                                ),
-                            ],
-                            value="flexibility",
-                        ),
-                    ],
-                    id="playlist-accordion",
+                    [single_playlist_template(playlist) for playlist in playlists]
                 )
             ),
-            str(playlist),
         ]
     )
 
@@ -247,57 +252,60 @@ def generate_playlist(playlist: dict):
 #### LAYOUTS #######
 ####################
 
+
 # Layout for signed in users
-signed_in_layout = html.Div(
-    children=[
-        signed_in_header,
-        dmc.Container(
-            [
-                dmc.Select(
-                    data=[],
-                    value="",
-                    clearable=True,
-                    nothingFound="No results found",
-                    searchable=True,
-                    id="select",
-                ),
-            ],
-            style={"marginTop": 20, "marginbottom": 20},
-        ),
-        dmc.Container(
-            [
-                dmc.Grid(
-                    [
-                        dmc.Col(
-                            html.Div(
-                                dl.Map(
-                                    [
-                                        dl.TileLayer(),
-                                    ],
-                                    center=[40, 15],
-                                    zoom=2,
-                                    id="map",
-                                    style={
-                                        "height": "75vh",
-                                        "z-index": 0,
-                                        "tabindex": -2,
-                                    },
+def display_signed_in_layout(username: str):
+    return html.Div(
+        children=[
+            display_signed_in_header(username),
+            dmc.Container(
+                [
+                    dmc.Select(
+                        data=[],
+                        value="",
+                        clearable=True,
+                        nothingFound="No results found",
+                        searchable=True,
+                        id="select",
+                    ),
+                ],
+                style={"marginTop": 20, "marginbottom": 20},
+            ),
+            dmc.Container(
+                [
+                    dmc.Grid(
+                        [
+                            dmc.Col(
+                                html.Div(
+                                    dl.Map(
+                                        [
+                                            dl.TileLayer(),
+                                        ],
+                                        center=[40, 15],
+                                        zoom=2,
+                                        id="map",
+                                        style={
+                                            "height": "75vh",
+                                            "z-index": 0,
+                                            "tabindex": -2,
+                                        },
+                                    ),
+                                    id="map-container",
                                 ),
-                                id="map-container",
+                                span=8,
                             ),
-                            span=8,
-                        ),
-                        dmc.Col(
-                            generate_playlist({"foo": "bar"}),
-                            span=4,
-                        ),
-                    ]
-                )
-            ],
-            style={"marginTop": 20, "marginbottom": 20},
-        ),
-    ]
-)
+                            dmc.Col(
+                                id="playlist-container",
+                                span=4,
+                            ),
+                        ]
+                    )
+                ],
+                style={"marginTop": 20, "marginbottom": 20},
+            ),
+        ]
+    )
+
 
 # Layout for signed out users
 signed_out_layout = html.Div(

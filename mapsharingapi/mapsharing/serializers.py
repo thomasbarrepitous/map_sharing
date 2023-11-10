@@ -24,8 +24,6 @@ class GeocodePointSerializer(serializers.ModelSerializer):
 
 
 class PlaylistSerializer(serializers.ModelSerializer):
-    geocode_points = GeocodePointSerializer(many=True, read_only=True)
-
     class Meta:
         model = Playlist
-        fields = ("id", "title", "description", "created_at", "geocode_points")
+        fields = ("id", "title", "description", "created_at", "user")
