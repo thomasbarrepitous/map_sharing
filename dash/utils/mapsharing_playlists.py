@@ -2,7 +2,7 @@ import os
 import requests
 
 PLAYLIST_API_URL = os.environ.get(
-    "AUTH_API_URL", "http://127.0.0.1:8000/api/playlists/"
+    "PLAYLIST_API_URL", "http://127.0.0.1:8000/api/playlists/"
 )
 
 
