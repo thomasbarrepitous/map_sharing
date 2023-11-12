@@ -169,3 +169,6 @@ cython_debug/
 # static files
 mapsharingapi/static
 
+
+# Dash files
+dash/cache
