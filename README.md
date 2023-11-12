@@ -73,8 +73,7 @@ To use Google Maps services, you'll need to create an API key on GCP:
 
     ```dotenv
     export GCP_KEY=your_gcp_key
-    export AUTH_API_URL="http://api:8000/api/account/"
-    export PLAYLIST_API_URL="http://api:8000/api/playlists/"
+    export API_URL="http://api:8000/api/"
     export DJANGO_SECRET_KEY=your_django_secret_key
     export DEBUG="True"
     ```

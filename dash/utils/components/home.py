@@ -1,6 +1,6 @@
 import dash_mantine_components as dmc
 from dash_iconify import DashIconify
-from dash import html
+from dash import html, ALL
 import dash_leaflet as dl
 
 ####################
@@ -165,11 +165,12 @@ inside_playlist_buttons_layout = dmc.Grid(
     [
         dmc.Col(
             dmc.Button(
-                "Add to Playlist",
-                leftIcon=DashIconify(icon="mdi:plus", width=20),
+                "Previous",
+                leftIcon=DashIconify(icon="uil:previous", width=20),
                 variant="gradient",
-                gradient={"from": "teal", "to": "lime", "deg": 105},
+                gradient={"from": "indigo", "to": "cyan"},
                 fullWidth=True,
+                id={"type": "close-playlist-btn", "index": 1},
             ),
             span=6,
         ),
@@ -198,53 +199,85 @@ outside_playlist_buttons_layout = dmc.Grid(
             ),
             span="auto",
         ),
-        # dmc.Col(
-        #     dmc.Button(
-        #         "Hide Menu",
-        #         leftIcon=DashIconify(icon="mdi:hide", width=20),
-        #         color="gray",
-        #         fullWidth=True,
-        #     ),
-        #     span=6,
-        # ),
     ]
 )
-
-
-def single_geocode_template(point: dict):
-    return dmc.AccordionItem(
-        [
-            dmc.AccordionControl(point["title"]),
-            dmc.AccordionPanel(
-                point["description"],
-            ),
-        ],
-    )
 
 
 def single_playlist_template(playlist: dict):
     return dmc.AccordionItem(
         [
-            dmc.AccordionControl(playlist["title"]),
-            dmc.AccordionPanel(
-                playlist["description"],
+            dmc.AccordionControl(
+                [
+                    dmc.Grid(
+                        [
+                            dmc.Col(playlist["title"], span="auto"),
+                            dmc.Col(
+                                dmc.ActionIcon(
+                                    DashIconify(icon="icon-park:go-end"),
+                                    size="lg",
+                                    variant="gradient",
+                                    id={
+                                        "type": "goto-playlist-btn",
+                                        "index": playlist["id"],
+                                    },
+                                    gradient={"from": "teal", "to": "lime", "deg": 105},
+                                ),
+                                span="content",
+                            ),
+                        ],
+                        align="center",
+                    )
+                ]
             ),
         ],
         value=f'{playlist["id"]}',
     )
 
 
-# Base layout for the playlist container
-def generate_playlists_menu(playlists: list):
+# Base layout for the playlist menu container
+def generate_playlists_menu():
     return dmc.Grid(
         [
             dmc.Col(outside_playlist_buttons_layout, span=12),
             dmc.Col(
                 dmc.Accordion(
-                    [single_playlist_template(playlist) for playlist in playlists]
+                    id={"type": "playlists-menu-accordion", "index": 0},
+                    variant="contained",
+                    chevronSize=0,
+                    disableChevronRotation=True,
                 )
             ),
-        ]
+        ],
+        style={"border": "1px solid #e0e0e0", "border-radius": 5},
+    )
+
+
+# Template for a single geocode point
+def single_geocode_template(point: dict):
+    return dmc.AccordionItem(
+        [
+            # dmc.AccordionControl(point["title"]),
+            dmc.AccordionControl(point["address"]),
+        ],
+        value="test",
+    )
+
+
+# Base layout for the geococde point menu container
+def generate_points_menu(index_clicked: int):
+    return dmc.Grid(
+        [
+            dmc.Col(inside_playlist_buttons_layout, span=12),
+            dmc.Col(
+                dmc.Accordion(
+                    id={"type": "points-menu-accordion", "index": index_clicked},
+                    variant="contained",
+                    chevronSize=0,
+                    disableChevronRotation=True,
+                )
+            ),
+        ],
+        style={"border": "1px solid #e0e0e0", "border-radius": 5},
     )
 
 
@@ -274,19 +307,19 @@ def display_signed_in_layout(username: str):
                                 span="auto",
                             ),
                             dmc.Col(
-                                dmc.ActionIcon(
-                                    DashIconify(icon="mdi:hide", width=20),
+                                dmc.Switch(
+                                    offLabel=DashIconify(icon="mdi:hide", width=20),
+                                    onLabel=DashIconify(icon="mdi:menu", width=20),
                                     size="lg",
-                                    variant="filled",
-                                    id="hide-menu-btn",
-                                    mb=10,
-                                    n_clicks=0,
+                                    checked=True,
+                                    id="toggle-menu-btn",
                                 ),
-                                id="hide-menu-btn-container",
+                                id="toggle-menu-btn-container",
                                 span="content",
                             ),
                         ],
                         id="search-container",
+                        align="center",
                     )
                 ],
                 style={"marginTop": 20, "marginbottom": 20},
@@ -302,6 +335,7 @@ def display_signed_in_layout(username: str):
                                             dl.TileLayer(),
                                         ],
                                         center=[40, 15],
+                                        trackViewport=True,
                                         zoom=2,
                                         id="map",
                                         style={
@@ -315,6 +349,7 @@ def display_signed_in_layout(username: str):
                                 span="auto",
                             ),
                             dmc.Col(
+                                generate_playlists_menu(),
                                 id="playlist-container",
                                 span=4,
                             ),

@@ -4,12 +4,12 @@ import requests
 API_URL = os.environ.get("API_URL", "http://127.0.0.1:8000/api/")
 
 
-def fetch_all_playlists(access_token: str) -> list:
+def fetch_all_geocode_points(access_token: str) -> list:
     headers = {
         "Authorization": f"Bearer {access_token}",
     }
     r = requests.get(
-        f"{API_URL}playlists/",
+        f"{API_URL}geocode-points/",
         headers=headers,
     )
     if r.status_code == 200:
@@ -17,17 +17,28 @@ def fetch_all_playlists(access_token: str) -> list:
     return []
 
 
-def create_playlist(title: str, description: str, username: str, access_token: str):
+def fetch_geocode_point_by_playlist(id: int, access_token: str) -> dict:
     headers = {
         "Authorization": f"Bearer {access_token}",
     }
-    data = {
-        "title": title,
-        "description": description,
-        "username": username,
+    r = requests.get(
+        f"{API_URL}playlists/{id}/geocode-points/",
+        headers=headers,
+    )
+    if r.status_code == 200:
+        return r.json()
+    return {}
+
+
+def create_geocode_point(
+    title: str, description: str, username: str, access_token: str
+):
+    headers = {
+        "Authorization": f"Bearer {access_token}",
     }
+    data = {}
     r = requests.post(
-        f"{API_URL}playlists/",
+        f"{API_URL}geocode-points/",
         headers=headers,
         data=data,
     )
@@ -36,12 +47,12 @@ def create_playlist(title: str, description: str, username: str, access_token: s
     return False
 
 
-def remove_playlist_by_id(id: int, access_token: str):
+def remove_geocode_point_by_id(id: int, access_token: str):
     headers = {
         "Authorization": f"Bearer {access_token}",
     }
     r = requests.post(
-        f"{API_URL}playlists/{id}/",
+        f"{API_URL}geocode-points/{id}/",
         headers=headers,
     )
     if r.status_code == 200:

@@ -1,14 +1,17 @@
 import dash
-from dash import callback, Output, Input, State, html, dcc
+from dash import callback, Output, Input, html, ctx, ALL, no_update, DiskcacheManager
+from dash._utils import AttributeDict
 import googlemaps
 import os
 import uuid
 import dash_leaflet as dl
 from dash.exceptions import PreventUpdate
 import utils.components.home as home_components
-import utils.mapsharing_playlists as msp
+import utils.mapsharing_playlists as msplay
+import utils.mapsharing_points as mspoints
 import dash_mantine_components as dmc
 from dash_iconify import DashIconify
+import diskcache
 
 dash.register_page(__name__, path="/")
 
@@ -16,6 +19,9 @@ dash.register_page(__name__, path="/")
 # API Auth
 gmaps = googlemaps.Client(key=os.environ.get("GCP_KEY"))
 session_token = uuid.uuid4().hex
+
+cache = diskcache.Cache("./cache")
+background_callback_manager = DiskcacheManager(cache)
 
 
 # Layout
@@ -90,51 +96,79 @@ def update_map(select_value):
 
 
 @callback(
-    Output("playlist-container", "children"),
-    Output("playlist-container", "span"),
-    Input("hide-menu-btn", "n_clicks"),
+    Output({"type": "points-menu-accordion", "index": ALL}, "children"),
+    Input({"type": "points-menu-accordion", "index": ALL}, "id"),
     Input("access-token", "data"),
 )
-def update_playlist_container(n_clicks, access_token):
-    print(n_clicks, flush=True)
-    if n_clicks is None:
-        raise PreventUpdate
-    if n_clicks % 2 == 0:
+def populate_points_menu(id, access_token):
+    if access_token:
+        clicked_index = id[0]["index"]
+        points = mspoints.fetch_geocode_point_by_playlist(clicked_index, access_token)
+        return [[home_components.single_geocode_template(point) for point in points]]
+
+
+@callback(
+    Output({"type": "playlists-menu-accordion", "index": ALL}, "children"),
+    Input("toggle-menu-btn", "checked"),
+    Input("access-token", "data"),
+)
+def populate_playlist_menu(checked, access_token):
+    if checked:
         if access_token:
             # Probably quite expensive to fetch all playlists on every click
             # TODO: Handle caching using background callbacks
             # TODO: Delay for 1 second to avoid rate limiting
-            playlists = msp.fetch_all_playlists(access_token)
-            return home_components.generate_playlists_menu(playlists), 4
+            playlists = msplay.fetch_all_playlists(access_token)
+            return [
+                [
+                    home_components.single_playlist_template(playlist)
+                    for playlist in playlists
+                ]
+            ]
+    return [[]]
+
+
+@callback(
+    Output("playlist-container", "children", allow_duplicate=True),
+    Output("playlist-container", "span", allow_duplicate=True),
+    Input("toggle-menu-btn", "checked"),
+    Input("access-token", "data"),
+    prevent_initial_call=True,
+)
+def toggle_playlist_container(checked, access_token):
+    if access_token is None:
+        raise PreventUpdate
+    if checked:
+        return home_components.generate_playlists_menu(), 4
     return [], 0
 
 
 @callback(
-    Output("hide-menu-btn-container", "children"),
-    Input("hide-menu-btn", "n_clicks"),
+    Output("playlist-container", "children", allow_duplicate=True),
+    Output("playlist-container", "span", allow_duplicate=True),
+    Input({"type": "goto-playlist-btn", "index": ALL}, "n_clicks"),
+    Input("access-token", "data"),
+    prevent_initial_call=True,
 )
-def toggle_hide_menu_btn(n_clicks):
-    if n_clicks is None:
+def display_points_menu(n_clicks, access_token):
+    if access_token is None or sum(filter(None, n_clicks)) == 0:
         raise PreventUpdate
-    if n_clicks % 2 == 0:
-        return dmc.ActionIcon(
-            DashIconify(icon="mdi:hide", width=20),
-            size="lg",
-            variant="filled",
-            color="gray",
-            id="hide-menu-btn",
-            mb=10,
-            n_clicks=n_clicks,
-        )
-    return dmc.ActionIcon(
-        DashIconify(icon="mdi:menu", width=20),
-        size="lg",
-        variant="filled",
-        color="lime",
-        id="hide-menu-btn",
-        mb=10,
-        n_clicks=n_clicks,
-    )
+    if n_clicks:
+        index_clicked = ctx.triggered_id["index"]
+        return home_components.generate_points_menu(index_clicked), 4
+    return [], 0
+
+
+@callback(
+    Output("playlist-container", "children", allow_duplicate=True),
+    Output("playlist-container", "span", allow_duplicate=True),
+    Input({"type": "close-playlist-btn", "index": ALL}, "n_clicks"),
+    prevent_initial_call=True,
+)
+def previous_btn_clicked(n_clicks):
+    if sum(filter(None, n_clicks)) == 0:
+        raise PreventUpdate
+    return home_components.generate_playlists_menu(), 4
 
 
 @callback(

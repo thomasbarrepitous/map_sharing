@@ -9,6 +9,7 @@ from .serializers import (
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.decorators import action
 
 
 class RegisterView(APIView):
@@ -47,7 +48,15 @@ class PlaylistViewSet(viewsets.ModelViewSet):
             status=status.HTTP_400_BAD_REQUEST,
         )
 
+    @action(detail=True, methods=["get"], url_path="geocode-points")
+    def geocode_points(self, request, pk=None):
+        playlist = self.get_object()
+        geocode_points = GeocodePoint.objects.filter(playlist=playlist)
+        serializer = GeocodePointSerializer(geocode_points, many=True)
+        return Response(serializer.data)
 
+
+# TODO: Modify the ViewSet to only allow retrieve() for the user that created the playlist
 class GeocodePointViewSet(viewsets.ModelViewSet):
     queryset = GeocodePoint.objects.all()
     serializer_class = GeocodePointSerializer

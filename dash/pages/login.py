@@ -84,7 +84,7 @@ layout = html.Div(
     Output("username", "data"),
     Input("access-token", "data"),
 )
-def decode_jwt(access_token):
+def set_username(access_token):
     if access_token:
         return mslogin.decode_jwt(access_token).get("username")
     return None

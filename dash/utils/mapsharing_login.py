@@ -1,14 +1,15 @@
 import os
 import requests
 import jwt
+from base64 import b64decode
 
-AUTH_API_URL = os.environ.get("AUTH_API_URL", "http://127.0.0.1:8000/api/account/")
+API_URL = os.environ.get("API_URL", "http://127.0.0.1:8000/api/")
 DJANGO_SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 
 
 def create_account(username: str, password: str, email: str):
     data = {"username": username, "password": password, "email": email}
-    r = requests.post(f"{AUTH_API_URL}register/", data=data)
+    r = requests.post(f"{API_URL}account/register/", data=data)
     if r.status_code == 201:
         return True
     return False
@@ -17,7 +18,7 @@ def create_account(username: str, password: str, email: str):
 def login_jwt(email: str, password: str):
     data = {"email": email, "password": password}
     r = requests.post(
-        f"{AUTH_API_URL}login/",
+        f"{API_URL}account/login/",
         data=data,
     )
     if r.status_code == 200:
