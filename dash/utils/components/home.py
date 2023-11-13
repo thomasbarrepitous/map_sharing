@@ -254,10 +254,30 @@ def generate_playlists_menu():
 
 # Template for a single geocode point
 def single_geocode_template(point: dict):
+    print(point)
     return dmc.AccordionItem(
         [
-            # dmc.AccordionControl(point["title"]),
-            dmc.AccordionControl(point["address"]),
+            dmc.AccordionControl(
+                dmc.Grid(
+                    [
+                        dmc.Col(
+                            dmc.Center(
+                                dmc.Text(
+                                    point["address"],
+                                    weight=700,
+                                    underline=True,
+                                    variant="gradient",
+                                    gradient={"from": "indigo", "to": "cyan"},
+                                )
+                            ),
+                            span=12,
+                        ),
+                        dmc.Col(f'Latitude : {point["latitude"]}', span=12),
+                        dmc.Col(f'Longitude : {point["longitude"]}', span=12),
+                    ],
+                    justify="center",
+                )
+            )
         ],
         value="test",
     )

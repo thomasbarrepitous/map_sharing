@@ -4,3 +4,6 @@ dash_leaflet==1.0.11
 dash_mantine_components==0.12.1
 googlemaps==4.10.0
 pyjwt==2.8.0
+multiprocess==0.70.15
+psutil==5.9.6
+diskcache==5.2.1
