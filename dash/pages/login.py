@@ -4,7 +4,6 @@ import dash_mantine_components as dmc
 from dash import dcc, html, Output, Input, State, no_update, callback
 from dash.exceptions import PreventUpdate
 from dash_iconify import DashIconify
-from requests import status_codes
 
 # Custom modules
 from utils import mapsharing_login as mslogin
@@ -81,16 +80,6 @@ layout = html.Div(
 
 
 @callback(
-    Output("username", "data"),
-    Input("access-token", "data"),
-)
-def set_username(access_token):
-    if access_token:
-        return mslogin.decode_jwt(access_token).get("username")
-    return None
-
-
-@callback(
     Output("access-token", "data"),
     Output("refresh-token", "data"),
     # Output("loading-form", "children"),
@@ -108,7 +97,7 @@ def login_button_handler(n_clicks, email, password):
     is_form_valid, email_feedback, password_feedback = validate_form(email, password)
     if n_clicks:
         if is_form_valid:
-            access_token, refresh_token = populate_jwt(email, password)
+            access_token, refresh_token = mslogin.login_jwt(email, password)
             if access_token and refresh_token:
                 return access_token, refresh_token, no_update, no_update, "/"
     return None, None, email_feedback, password_feedback, no_update
@@ -123,7 +112,3 @@ def validate_form(email, password):
         email_feedback,
         password_feedback,
     )
-
-
-def populate_jwt(username, password):
-    return mslogin.login_jwt(username, password)

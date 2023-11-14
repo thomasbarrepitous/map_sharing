@@ -160,31 +160,35 @@ def display_signed_in_header(username: str):
 #### PLAYLISTS #####
 ####################
 
+
 # Buttons for a selected playlist
-inside_playlist_buttons_layout = dmc.Grid(
-    [
-        dmc.Col(
-            dmc.Button(
-                "Previous",
-                leftIcon=DashIconify(icon="uil:previous", width=20),
-                variant="gradient",
-                gradient={"from": "indigo", "to": "cyan"},
-                fullWidth=True,
-                id={"type": "close-playlist-btn", "index": 1},
+def inside_playlist_buttons_layout(index_clicked):
+    return dmc.Grid(
+        [
+            dmc.Col(
+                dmc.Button(
+                    "Previous",
+                    leftIcon=DashIconify(icon="uil:previous", width=20),
+                    variant="gradient",
+                    gradient={"from": "indigo", "to": "cyan"},
+                    fullWidth=True,
+                    id={"type": "close-playlist-btn", "index": 1},
+                ),
+                span=6,
             ),
-            span=6,
-        ),
-        dmc.Col(
-            dmc.Button(
-                "Delete Playlist",
-                leftIcon=DashIconify(icon="mdi:bin", width=20),
-                color="red",
-                fullWidth=True,
+            dmc.Col(
+                dmc.Button(
+                    "Delete Playlist",
+                    leftIcon=DashIconify(icon="mdi:bin", width=20),
+                    color="red",
+                    fullWidth=True,
+                    id={"type": "delete-playlist-btn", "index": index_clicked},
+                ),
+                span=6,
             ),
-            span=6,
-        ),
-    ]
-)
+        ]
+    )
+
 
 # Buttons on top of the playlist layout when no playlist is selected
 outside_playlist_buttons_layout = dmc.Grid(
@@ -287,7 +291,7 @@ def single_geocode_template(point: dict):
 def generate_points_menu(index_clicked: int):
     return dmc.Grid(
         [
-            dmc.Col(inside_playlist_buttons_layout, span=12),
+            dmc.Col(inside_playlist_buttons_layout(index_clicked), span=12),
             dmc.Col(
                 dmc.Accordion(
                     id={"type": "points-menu-accordion", "index": index_clicked},

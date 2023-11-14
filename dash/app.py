@@ -1,5 +1,6 @@
 import dash
-from dash import Dash, dcc, html
+from dash import Dash, dcc, callback, html, Output, Input
+from utils import mapsharing_login as mslogin
 
 app = Dash(
     __name__,
@@ -20,6 +21,16 @@ app.layout = html.Div(
         dash.page_container,
     ]
 )
+
+
+@callback(
+    Output("username", "data"),
+    Input("access-token", "data"),
+)
+def set_username(access_token):
+    if access_token:
+        return mslogin.decode_jwt(access_token).get("username")
+    return None
 
 
 if __name__ == "__main__":

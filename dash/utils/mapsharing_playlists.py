@@ -40,10 +40,10 @@ def remove_playlist_by_id(id: int, access_token: str):
     headers = {
         "Authorization": f"Bearer {access_token}",
     }
-    r = requests.post(
+    r = requests.delete(
         f"{API_URL}playlists/{id}/",
         headers=headers,
     )
-    if r.status_code == 200:
+    if r.status_code == 204:
         return True
     return False

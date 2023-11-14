@@ -162,6 +162,22 @@ def display_points_menu(n_clicks, access_token):
 @callback(
     Output("playlist-container", "children", allow_duplicate=True),
     Output("playlist-container", "span", allow_duplicate=True),
+    Input({"type": "delete-playlist-btn", "index": ALL}, "n_clicks"),
+    Input("access-token", "data"),
+    prevent_initial_call=True,
+)
+def delete_playlist_btn(n_clicks, access_token):
+    if access_token is None or sum(filter(None, n_clicks)) == 0:
+        raise PreventUpdate
+    if n_clicks:
+        if msplay.remove_playlist_by_id(ctx.triggered_id["index"], access_token):
+            return home_components.generate_playlists_menu(), 4
+    return no_update, no_update
+
+
+@callback(
+    Output("playlist-container", "children", allow_duplicate=True),
+    Output("playlist-container", "span", allow_duplicate=True),
     Input({"type": "close-playlist-btn", "index": ALL}, "n_clicks"),
     prevent_initial_call=True,
 )

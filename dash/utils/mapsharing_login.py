@@ -26,6 +26,17 @@ def login_jwt(email: str, password: str):
     return None, None
 
 
+def refresh_jwt(refresh_token: str):
+    data = {"refresh": refresh_token}
+    r = requests.post(
+        f"{API_URL}account/refresh/",
+        data=data,
+    )
+    if r.status_code == 200:
+        return r.json()["access"]
+    return None
+
+
 def decode_jwt(access_token: str) -> dict:
     decoded_data = jwt.decode(
         jwt=access_token, key=DJANGO_SECRET_KEY, algorithms=["HS256"]
