@@ -16,6 +16,7 @@ app = Dash(
 
 app.layout = html.Div(
     [
+        dcc.Location(id="url", refresh=True),
         dcc.Store(id="access-token", storage_type="local", data=None),
         dcc.Store(id="refresh-token", storage_type="local", data=None),
         dcc.Store(id="username", storage_type="local", data=None),

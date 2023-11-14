@@ -160,6 +160,50 @@ def display_signed_in_header(username: str):
 #### PLAYLISTS #####
 ####################
 
+add_playlist_btn = dmc.Button(
+    "New Playlist",
+    leftIcon=DashIconify(icon="material-symbols:add", width=20),
+    variant="gradient",
+    gradient={"from": "teal", "to": "lime", "deg": 105},
+    fullWidth=True,
+    id="add-playlist-btn",
+)
+
+
+add_playlist_modal = dmc.Modal(
+    title="Add a new playlist",
+    id="add-playlist-modal",
+    centered=True,
+    zIndex=10000,
+    children=[
+        dmc.Center(
+            dmc.TextInput(
+                label="Playlist name:",
+                id="playlist-name-modal-input",
+                style={"width": 200},
+            ),
+        ),
+        dmc.Space(h=30),
+        dmc.Group(
+            [
+                dmc.Button(
+                    "Submit",
+                    variant="gradient",
+                    gradient={"from": "teal", "to": "lime", "deg": 105},
+                    id="submit-playlist-modal-btn",
+                ),
+                dmc.Button(
+                    "Close",
+                    color="red",
+                    # variant="outline",
+                    id="close-playlist-modal-btn",
+                ),
+            ],
+            position="right",
+        ),
+    ],
+)
+
 
 # Buttons for a selected playlist
 def inside_playlist_buttons_layout(index_clicked):
@@ -194,15 +238,10 @@ def inside_playlist_buttons_layout(index_clicked):
 outside_playlist_buttons_layout = dmc.Grid(
     [
         dmc.Col(
-            dmc.Button(
-                "New Playlist",
-                leftIcon=DashIconify(icon="material-symbols:add", width=20),
-                variant="gradient",
-                gradient={"from": "teal", "to": "lime", "deg": 105},
-                fullWidth=True,
-            ),
+            add_playlist_btn,
             span="auto",
         ),
+        add_playlist_modal,
     ]
 )
 
@@ -242,7 +281,18 @@ def single_playlist_template(playlist: dict):
 def generate_playlists_menu():
     return dmc.Grid(
         [
-            dmc.Col(outside_playlist_buttons_layout, span=12),
+            dmc.Col(
+                dmc.Center(
+                    dmc.Text(
+                        "Playlists",
+                        weight=700,
+                        underline=True,
+                        variant="gradient",
+                        gradient={"from": "teal", "to": "lime", "deg": 105},
+                    )
+                ),
+                span=12,
+            ),
             dmc.Col(
                 dmc.Accordion(
                     id={"type": "playlists-menu-accordion", "index": 0},
@@ -251,6 +301,7 @@ def generate_playlists_menu():
                     disableChevronRotation=True,
                 )
             ),
+            dmc.Col(outside_playlist_buttons_layout, span=12),
         ],
         style={"border": "1px solid #e0e0e0", "border-radius": 5},
     )

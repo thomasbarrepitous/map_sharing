@@ -59,7 +59,6 @@ layout = html.Div(
     children=[
         dmc.Container(
             [
-                dcc.Location(id="url", refresh=True),
                 dmc.Anchor(
                     dmc.Button(
                         "Previous",
@@ -82,10 +81,9 @@ layout = html.Div(
 @callback(
     Output("access-token", "data", allow_duplicate=True),
     Output("refresh-token", "data"),
-    # Output("loading-form", "children"),
     Output("username-input", "error"),
     Output("password-input", "error"),
-    Output("url", "pathname"),
+    Output("url", "pathname", allow_duplicate=True),
     Input("login-button", "n_clicks"),
     State("username-input", "value"),
     State("password-input", "value"),

@@ -1,6 +1,15 @@
 import dash
-from dash import callback, Output, Input, html, ctx, ALL, no_update, DiskcacheManager
-from dash._utils import AttributeDict
+from dash import (
+    callback,
+    Output,
+    Input,
+    State,
+    html,
+    ctx,
+    ALL,
+    no_update,
+    DiskcacheManager,
+)
 import googlemaps
 import os
 import uuid
@@ -9,8 +18,6 @@ from dash.exceptions import PreventUpdate
 import utils.components.home as home_components
 import utils.mapsharing_playlists as msplay
 import utils.mapsharing_points as mspoints
-import dash_mantine_components as dmc
-from dash_iconify import DashIconify
 import diskcache
 
 dash.register_page(__name__, path="/")
@@ -23,8 +30,6 @@ session_token = uuid.uuid4().hex
 cache = diskcache.Cache("./cache")
 background_callback_manager = DiskcacheManager(cache)
 
-
-# Layout
 
 layout = html.Div(id="home-layout")
 
@@ -197,3 +202,35 @@ def disconnect_user(n_clicks):
     if n_clicks is None:
         raise PreventUpdate
     return None, None
+
+
+@callback(
+    Output("add-playlist-modal", "opened"),
+    Input("add-playlist-btn", "n_clicks"),
+    Input("close-playlist-modal-btn", "n_clicks"),
+    State("add-playlist-modal", "opened"),
+    prevent_initial_call=True,
+)
+def toggle_playlist_modal(n_add, n_close, opened):
+    return not opened
+
+
+@callback(
+    Output("url", "href", allow_duplicate=True),
+    Output("playlist-name-modal-input", "error"),
+    Input("submit-playlist-modal-btn", "n_clicks"),
+    State("add-playlist-modal", "opened"),
+    State("playlist-name-modal-input", "value"),
+    State("access-token", "data"),
+    State("username", "data"),
+    prevent_initial_call=True,
+)
+def submit_playlist_modal(n_submit, opened, playlist_name, access_token, username):
+    if n_submit:
+        if playlist_name:
+            if msplay.create_playlist(
+                playlist_name, "lorem ipsum", username, access_token
+            ):
+                return "/", no_update
+        return no_update, "Please enter a playlist name"
+    return no_update, no_update

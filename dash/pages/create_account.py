@@ -61,7 +61,6 @@ signup_form = (
 
 layout = html.Div(
     children=[
-        dcc.Location(id="url-login"),
         dmc.Container(
             [
                 dmc.Anchor(
@@ -134,7 +133,7 @@ def validate_login(n_clicks, username, password, confirm_password, email):
     Output("signup-create-btn", "disabled"),
     Output("signup-create-btn", "children"),
     Output("signup-create-btn", "leftIcon"),
-    Output("url-login", "pathname"),
+    Output("url", "pathname", allow_duplicate=True),
     Input("signup-create-btn", "n_clicks"),
     State("signup-username-input", "value"),
     State("signup-password-input", "value"),
