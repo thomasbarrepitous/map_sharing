@@ -80,7 +80,7 @@ layout = html.Div(
 
 
 @callback(
-    Output("access-token", "data"),
+    Output("access-token", "data", allow_duplicate=True),
     Output("refresh-token", "data"),
     # Output("loading-form", "children"),
     Output("username-input", "error"),

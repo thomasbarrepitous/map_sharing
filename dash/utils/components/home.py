@@ -258,7 +258,6 @@ def generate_playlists_menu():
 
 # Template for a single geocode point
 def single_geocode_template(point: dict):
-    print(point)
     return dmc.AccordionItem(
         [
             dmc.AccordionControl(

@@ -1,7 +1,6 @@
 import os
 import requests
 import jwt
-from base64 import b64decode
 
 API_URL = os.environ.get("API_URL", "http://127.0.0.1:8000/api/")
 DJANGO_SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
@@ -29,7 +28,7 @@ def login_jwt(email: str, password: str):
 def refresh_jwt(refresh_token: str):
     data = {"refresh": refresh_token}
     r = requests.post(
-        f"{API_URL}account/refresh/",
+        f"{API_URL}account/login/refresh/",
         data=data,
     )
     if r.status_code == 200:
@@ -37,8 +36,11 @@ def refresh_jwt(refresh_token: str):
     return None
 
 
-def decode_jwt(access_token: str) -> dict:
-    decoded_data = jwt.decode(
-        jwt=access_token, key=DJANGO_SECRET_KEY, algorithms=["HS256"]
-    )
+def decode_jwt(token: str) -> dict | None:
+    try:
+        decoded_data = jwt.decode(
+            jwt=token, key=DJANGO_SECRET_KEY, algorithms=["HS256"]
+        )
+    except jwt.exceptions.DecodeError:
+        return None
     return decoded_data
