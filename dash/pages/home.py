@@ -7,6 +7,7 @@ from dash import (
     html,
     ctx,
     ALL,
+    MATCH,
     no_update,
     DiskcacheManager,
 )
@@ -109,7 +110,11 @@ def populate_points_menu(id, access_token):
     if access_token:
         clicked_index = id[0]["index"]
         points = mspoints.fetch_geocode_point_by_playlist(clicked_index, access_token)
-        return [[home_components.single_geocode_template(point) for point in points]]
+        if points:
+            return [
+                [home_components.single_geocode_template(point) for point in points]
+            ]
+    return [["No points to display"]]
 
 
 @callback(
@@ -233,4 +238,39 @@ def submit_playlist_modal(n_submit, opened, playlist_name, access_token, usernam
             ):
                 return "/", no_update
         return no_update, "Please enter a playlist name"
+    return no_update, no_update
+
+
+@callback(
+    Output({"id": "add-point-modal", "index": MATCH}, "opened"),
+    Input({"id": "add-point-btn", "index": MATCH}, "n_clicks"),
+    Input("close-point-modal-btn", "n_clicks"),
+    State({"id": "add-point-modal", "index": MATCH}, "opened"),
+    prevent_initial_call=True,
+)
+def toggle_point_modal(n_add, n_close, opened):
+    return not opened
+
+
+@callback(
+    Output("url", "href", allow_duplicate=True),
+    Output("point-name-modal-input", "error"),
+    Input("submit-point-modal-btn", "n_clicks"),
+    State("point-name-modal-input", "value"),
+    State({"id": "add-point-btn", "index": ALL}, "id"),
+    State("access-token", "data"),
+    prevent_initial_call=True,
+)
+def submit_point_modal(n_submit, point_name, index_clicked, access_token):
+    if n_submit:
+        if point_name:
+            playlist_id = index_clicked[0]["index"]
+            if mspoints.create_geocode_point(
+                title=point_name,
+                description="lorem ipsum",
+                playlist_id=playlist_id,
+                access_token=access_token,
+            ):
+                return "/", no_update
+        return no_update, "Please enter a point name"
     return no_update, no_update

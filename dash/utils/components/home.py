@@ -170,6 +170,53 @@ add_playlist_btn = dmc.Button(
 )
 
 
+def add_point_btn(playlist_id: int):
+    return dmc.Button(
+        "New Address",
+        leftIcon=DashIconify(icon="material-symbols:add", width=20),
+        variant="gradient",
+        gradient={"from": "indigo", "to": "cyan", "deg": 105},
+        fullWidth=True,
+        id={"id": "add-point-btn", "index": playlist_id},
+    )
+
+
+def add_point_modal(playlist_id: int):
+    return dmc.Modal(
+        title="Add a new point in your playlist !",
+        id={"id": "add-point-modal", "index": playlist_id},
+        centered=True,
+        zIndex=10000,
+        children=[
+            dmc.Center(
+                dmc.TextInput(
+                    label="Point name:",
+                    id="point-name-modal-input",
+                    style={"width": 200},
+                ),
+            ),
+            dmc.Space(h=30),
+            dmc.Group(
+                [
+                    dmc.Button(
+                        "Submit",
+                        variant="gradient",
+                        gradient={"from": "teal", "to": "lime", "deg": 105},
+                        id="submit-point-modal-btn",
+                    ),
+                    dmc.Button(
+                        "Close",
+                        color="red",
+                        # variant="outline",
+                        id="close-point-modal-btn",
+                    ),
+                ],
+                position="right",
+            ),
+        ],
+    )
+
+
 add_playlist_modal = dmc.Modal(
     title="Add a new playlist",
     id="add-playlist-modal",
@@ -222,7 +269,7 @@ def inside_playlist_buttons_layout(index_clicked):
             ),
             dmc.Col(
                 dmc.Button(
-                    "Delete Playlist",
+                    "Delete",
                     leftIcon=DashIconify(icon="mdi:bin", width=20),
                     color="red",
                     fullWidth=True,
@@ -350,6 +397,8 @@ def generate_points_menu(index_clicked: int):
                     disableChevronRotation=True,
                 )
             ),
+            dmc.Col(add_point_btn(index_clicked), span=12),
+            add_point_modal(index_clicked),
         ],
         style={"border": "1px solid #e0e0e0", "border-radius": 5},
     )

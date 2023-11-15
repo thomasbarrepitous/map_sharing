@@ -21,7 +21,15 @@ class UserSerializer(serializers.ModelSerializer):
 class GeocodePointSerializer(serializers.ModelSerializer):
     class Meta:
         model = GeocodePoint
-        fields = ("id", "latitude", "longitude", "address", "playlist")
+        fields = (
+            "id",
+            "latitude",
+            "longitude",
+            "address",
+            "playlist",
+            "point_name",
+            "description",
+        )
 
 
 class PlaylistSerializer(serializers.ModelSerializer):
