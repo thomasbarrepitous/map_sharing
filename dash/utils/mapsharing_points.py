@@ -31,7 +31,13 @@ def fetch_geocode_point_by_playlist(id: int, access_token: str) -> dict:
 
 
 def create_geocode_point(
-    title: str, description: str, playlist_id: int, access_token: str
+    title: str,
+    description: str,
+    latitude: float,
+    longitude: float,
+    address: str,
+    playlist_id: int,
+    access_token: str,
 ):
     headers = {
         "Authorization": f"Bearer {access_token}",
@@ -39,9 +45,9 @@ def create_geocode_point(
     data = {
         "point_name": title,
         "description": description,
-        "latitude": 0,
-        "longitude": 0,
-        "address": "kdaowpkpw",
+        "latitude": latitude,
+        "longitude": longitude,
+        "address": address,
         "playlist": playlist_id,
     }
     r = requests.post(

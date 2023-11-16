@@ -257,20 +257,49 @@ def toggle_point_modal(n_add, n_close, opened):
     Output("point-name-modal-input", "error"),
     Input("submit-point-modal-btn", "n_clicks"),
     State("point-name-modal-input", "value"),
+    State("address-modal-input", "value"),
+    State("latitude-modal-input", "value"),
+    State("longitude-modal-input", "value"),
+    State("description-modal-input", "value"),
     State({"id": "add-point-btn", "index": ALL}, "id"),
     State("access-token", "data"),
     prevent_initial_call=True,
 )
-def submit_point_modal(n_submit, point_name, index_clicked, access_token):
+def submit_point_modal(
+    n_submit,
+    point_name,
+    address,
+    latitude,
+    longitude,
+    description,
+    index_clicked,
+    access_token,
+):
     if n_submit:
         if point_name:
             playlist_id = index_clicked[0]["index"]
             if mspoints.create_geocode_point(
                 title=point_name,
-                description="lorem ipsum",
+                description=description,
+                latitude=latitude,
+                longitude=longitude,
+                address=address,
                 playlist_id=playlist_id,
                 access_token=access_token,
             ):
                 return "/", no_update
         return no_update, "Please enter a point name"
+    return no_update, no_update
+
+
+@callback(
+    Output("url", "href", allow_duplicate=True),
+    Output("select", "error"),
+    Input({"id": "add-current-point-btn", "index": ALL}, "n_clicks"),
+    State("select", "data"),
+    State("access-token", "data"),
+    prevent_initial_call=True,
+)
+def add_current_selected_point(n_clicks, select_value, access_token):
+    print(select_value)
     return no_update, no_update

@@ -170,6 +170,17 @@ add_playlist_btn = dmc.Button(
 )
 
 
+def add_current_point(playlist_id: int):
+    return dmc.Button(
+        "Add Current Address",
+        leftIcon=DashIconify(icon="material-symbols:add", width=20),
+        variant="gradient",
+        gradient={"from": "teal", "to": "lime", "deg": 105},
+        fullWidth=True,
+        id={"id": "add-current-point-btn", "index": playlist_id},
+    )
+
+
 def add_point_btn(playlist_id: int):
     return dmc.Button(
         "New Address",
@@ -192,6 +203,34 @@ def add_point_modal(playlist_id: int):
                 dmc.TextInput(
                     label="Point name:",
                     id="point-name-modal-input",
+                    style={"width": 200},
+                ),
+            ),
+            dmc.Center(
+                dmc.TextInput(
+                    label="Address:",
+                    id="address-modal-input",
+                    style={"width": 200},
+                ),
+            ),
+            dmc.Center(
+                dmc.TextInput(
+                    label="Description:",
+                    id="description-modal-input",
+                    style={"width": 200},
+                ),
+            ),
+            dmc.Center(
+                dmc.TextInput(
+                    label="Latitude:",
+                    id="latitude-modal-input",
+                    style={"width": 200},
+                ),
+            ),
+            dmc.Center(
+                dmc.TextInput(
+                    label="Longitude:",
+                    id="longitude-modal-input",
                     style={"width": 200},
                 ),
             ),
@@ -397,7 +436,16 @@ def generate_points_menu(index_clicked: int):
                     disableChevronRotation=True,
                 )
             ),
-            dmc.Col(add_point_btn(index_clicked), span=12),
+            dmc.Col(
+                dmc.Stack(
+                    [
+                        add_point_btn(index_clicked),
+                        add_current_point(index_clicked),
+                    ],
+                    spacing="xs",
+                ),
+                span=12,
+            ),
             add_point_modal(index_clicked),
         ],
         style={"border": "1px solid #e0e0e0", "border-radius": 5},
