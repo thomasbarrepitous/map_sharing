@@ -12,7 +12,25 @@
 
 This project is a geographic points sharing application built using Python, Django Rest Framework (DRF), and Dash. The application allows users to save and organize locations, create collections of points, and share them with others. The primary focus of the project is to showcase proficiency in REST APIs, JWT authentication, and other relevant skills.
 
+<figure>
+<img src="https://github.com/thomasbarrepitous/map_sharing/assets/23354346/ad06b692-1e60-4b3e-bb1a-0b7682f3b709" alt="drawing" width="350"/>
+  <figcaption>Home</figcaption>
+</figure>
 
+<figure>
+<img src="https://github.com/thomasbarrepitous/map_sharing/assets/23354346/ec4985c4-0a60-409a-9412-c8f61d09d435" alt="drawing" width="350"/>
+  <figcaption>Login</figcaption>
+</figure>
+
+<figure>
+<img src="https://github.com/thomasbarrepitous/map_sharing/assets/23354346/4b2ec420-4543-4afc-9168-48548a77d36c" alt="drawing" width="350"/>
+  <figcaption>Logged in Home</figcaption>
+</figure>
+
+<figure>
+<img src="https://github.com/thomasbarrepitous/map_sharing/assets/23354346/764cf029-a1a2-4185-8eda-48fc594de38b" alt="drawing" width="350"/>
+  <figcaption>Collections (Playlist)</figcaption>
+</figure>
 
 ## Features
 
