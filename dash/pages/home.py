@@ -20,6 +20,7 @@ import utils.components.home as home_components
 import utils.mapsharing_playlists as msplay
 import utils.mapsharing_points as mspoints
 import diskcache
+import math
 
 dash.register_page(__name__, path="/")
 
@@ -301,20 +302,19 @@ def submit_point_modal(
     prevent_initial_call=True,
 )
 def add_current_selected_point(n_clicks, select_value, access_token):
-    if n_clicks:
-        if select_value != []:
-            playlist_id = ctx.triggered_id["index"]
-            data = gmaps.geocode(place_id=select_value[0]["value"])
-            if mspoints.create_geocode_point(
-                title=data[0]["formatted_address"],
-                description=data[0]["address_components"][0]["long_name"],
-                latitude=float(data[0]["geometry"]["location"]["lat"]),
-                longitude=float(data[0]["geometry"]["location"]["lng"]),
-                address=data[0]["formatted_address"],
-                playlist_id=playlist_id,
-                access_token=access_token,
-            ):
-                return "/", no_update
-            else:
-                return no_update, "Something went wrong"
+    if n_clicks[0] and select_value != []:
+        playlist_id = ctx.triggered_id["index"]
+        data = gmaps.geocode(place_id=select_value[0]["value"])
+        if mspoints.create_geocode_point(
+            title=data[0]["formatted_address"][:200],
+            description=data[0]["address_components"][0]["long_name"],
+            longitude=int(data[0]["geometry"]["location"]["lng"] * 1000000) / 1000000.0,
+            latitude=int(data[0]["geometry"]["location"]["lat"] * 1000000) / 1000000.0,
+            address=data[0]["formatted_address"][:255],
+            playlist_id=playlist_id,
+            access_token=access_token,
+        ):
+            return "/", no_update
+        else:
+            return no_update, "Something went wrong"
     return no_update, no_update
