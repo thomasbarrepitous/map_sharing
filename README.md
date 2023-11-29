@@ -6,12 +6,11 @@
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Usage](#usage)
-- [API Documentation](#api-documentation)
 - [License](#license)
 
 ## Overview
 
-This project is a geographic points sharing application built using Python, Django Rest Framework (DRF), and Dash. The application allows users to save and organize locations, create collections of points, and share them with others. The primary focus of the project is to showcase proficiency in REST APIs, JWT authentication, caching, and other relevant skills.
+This project is a geographic points sharing application built using Python, Django Rest Framework (DRF), and Dash. The application allows users to save and organize locations, create collections of points, and share them with others. The primary focus of the project is to showcase proficiency in REST APIs, JWT authentication, and other relevant skills.
 
 
 
@@ -23,13 +22,10 @@ This project is a geographic points sharing application built using Python, Djan
 
 - **Collections**: Create collections of points for better organization.
 
-- **Sharing**: Share collections of points with other users.
-
 - **RESTful API**: Utilize Django Rest Framework to build a robust and scalable API.
 
 - **JWT Authentication**: Implement JSON Web Token (JWT) authentication for secure user access.
 
-- **Caching**: Optimize performance using caching mechanisms for frequently accessed data.
 
 ## Requirements
 
@@ -94,12 +90,6 @@ To use Google Maps services, you'll need to create an API key on GCP:
 2. Create an account or log in if you already have one.
 
 3. Explore the features to save and manage geographic points and collections.
-
-4. Share your collections with other users.
-
-## API Documentation
-
-The API documentation is available at [http://localhost:8000/api/docs/](http://localhost:8000/api/swagger/). Explore the endpoints and test the API functionality.
 
 
 ## License
